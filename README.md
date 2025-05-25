@@ -165,7 +165,7 @@ Beberapa metode yang digunakan dalam tahap ini antara lain:
 
 ### Langkah-Langkah Proses
 
-1. **Mengimpor dan Menggabungkan Dataset**
+1. **Menggabungkan Dataset**
    Dua file utama yang digunakan adalah `eco_rating.csv` (berisi penilaian pengguna terhadap destinasi) dan `eco_place.csv` (memuat informasi konten tiap tempat). Keduanya digabungkan berdasarkan `place_id` untuk memperkaya data.
 
 2. **Pembersihan Duplikat dan Nilai Kosong**
