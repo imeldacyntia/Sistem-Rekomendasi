@@ -44,87 +44,61 @@ Untuk mencapai tujuan di atas, sistem akan dikembangkan dengan mengimplementasik
 
 Dataset yang digunakan dalam proyek ini berjudul **[Indonesia’s Ecotourism Dataset](https://www.kaggle.com/datasets/farazbeniqnomf/indonesiaecotourism))** dan tersedia di platform Kaggle. Dataset ini dikembangkan untuk mendukung pengembangan sistem rekomendasi berbasis ekowisata di Indonesia. Terdapat tiga file utama yang digunakan, yaitu: `eco_place.csv`, `eco_event.csv`, dan `eco_rating.csv`.
 
-### 1. eco_place.csv (Data Destinasi Wisata)
+### 1. eco\_place.csv (Data Destinasi Wisata)
 
-File ini berisi informasi tentang tempat-tempat wisata alam dan ekowisata di Indonesia.
+File ini berisi informasi tentang tempat-tempat wisata alam dan ekowisata di Indonesia, termasuk deskripsi, kategori, harga tiket, rating, lokasi, dan dokumentasi visual.
 
-- **Jumlah data**: 437 baris
-- **Jumlah kolom**: 11
-- **Missing value**: Tidak ada
+* **Jumlah data**: 182 baris
+* **Jumlah kolom**: 13
+* **Missing value**: Terdapat missing value pada `gallery_photo_img2` (2 baris) dan `gallery_photo_img3` (77 baris)
 
-| No  | Nama Kolom   | Tipe Data |
-| --- | ------------ | --------- |
-| 0   | place_id     | int64     |
-| 1   | place_name   | object    |
-| 2   | description  | object    |
-| 3   | category     | object    |
-| 4   | city         | object    |
-| 5   | price        | int64     |
-| 6   | rating       | float64   |
-| 7   | time_minutes | float64   |
-| 8   | coordinate   | object    |
-| 9   | lat          | float64   |
-| 10  | long         | float64   |
+| No | Nama Kolom             | Tipe Data | Keterangan                                 |
+| -- | ---------------------- | --------- | ------------------------------------------ |
+| 0  | `place_id`             | int64     | ID unik untuk setiap tempat wisata         |
+| 1  | `place_name`           | object    | Nama tempat wisata                         |
+| 2  | `place_description`    | object    | Deskripsi tempat                           |
+| 3  | `category`             | object    | Kategori tempat wisata (Alam, Budaya, dsb) |
+| 4  | `city`                 | object    | Kota atau kabupaten tempat wisata          |
+| 5  | `price`                | object    | Harga tiket masuk (dalam teks)             |
+| 6  | `rating`               | float64   | Rata-rata rating dari pengunjung           |
+| 7  | `description_location` | object    | Deskripsi lokasi                           |
+| 8  | `place_img`            | object    | Link utama gambar tempat                   |
+| 9  | `gallery_photo_img1`   | object    | Link gambar galeri 1                       |
+| 10 | `gallery_photo_img2`   | object    | Link gambar galeri 2                       |
+| 11 | `gallery_photo_img3`   | object    | Link gambar galeri 3                       |
+| 12 | `place_map`            | object    | Link lokasi peta (embed maps)              |
 
-**Deskripsi Fitur:**
+### 2. eco\_event.csv (Data Event Wisata)
 
-- `place_id`: ID unik dari destinasi wisata.
-- `place_name`: Nama dari tempat wisata.
-- `description`: Deskripsi singkat mengenai tempat tersebut.
-- `category`: Kategori tempat (misalnya alam, sejarah, budaya, dan lain-lain).
-- `city`: Kota atau kabupaten tempat destinasi tersebut berada.
-- `price`: Harga tiket masuk (dalam satuan Rupiah).
-- `rating`: Nilai rata-rata rating dari pengunjung (skala 1–5).
-- `time_minutes`: Estimasi durasi kunjungan (dalam menit).
-- `coordinate`: Gabungan latitude dan longitude dalam format teks.
-- `lat`: Latitude dari destinasi.
-- `long`: Longitude dari destinasi.
+File ini berisi informasi tentang event atau kegiatan wisata yang diadakan di destinasi ekowisata tertentu. Data ini bermanfaat untuk menambah konteks dan nilai tambah pada sistem rekomendasi, terutama dalam hal promosi event spesial.
 
-### 2. eco_event.csv (Data Kegiatan)
+* **Jumlah data**: 6 baris
+* **Jumlah kolom**: 6
+* **Missing value**: Tidak ada
 
-File ini mencatat berbagai acara atau event yang pernah atau akan diselenggarakan di lokasi wisata tertentu.
+| No | Nama Kolom    | Tipe Data | Keterangan                                     |
+| -- | ------------- | --------- | ---------------------------------------------- |
+| 0  | `event_id`    | int64     | ID unik dari event wisata                      |
+| 1  | `event_img`   | object    | Link gambar utama dari event                   |
+| 2  | `event_name`  | object    | Nama dari event wisata                         |
+| 3  | `event_place` | object    | Nama tempat atau destinasi penyelenggara event |
+| 4  | `event_date`  | object    | Tanggal pelaksanaan event (format teks)        |
+| 5  | `event_about` | object    | Deskripsi ringkas mengenai event               |
 
-- **Jumlah data**: 135 baris
-- **Jumlah kolom**: 6
-- **Missing value**: Ada pada kolom tanggal untuk beberapa baris
 
-| No  | Nama Kolom | Tipe Data |
-| --- | ---------- | --------- |
-| 0   | event_id   | int64     |
-| 1   | place_id   | int64     |
-| 2   | event_name | object    |
-| 3   | event_type | object    |
-| 4   | start_date | object    |
-| 5   | end_date   | object    |
+### 3. eco\_rating.csv (Data Rating oleh Pengguna)
 
-**Deskripsi Fitur:**
+File ini berisi interaksi pengguna berupa rating terhadap destinasi wisata. Data ini menjadi komponen utama dalam membangun model rekomendasi berbasis *collaborative filtering*.
 
-- `event_id`: ID unik acara.
-- `place_id`: ID tempat wisata tempat acara diadakan.
-- `event_name`: Nama acara yang diselenggarakan.
-- `event_type`: Jenis acara (misalnya festival, budaya, edukasi).
-- `start_date`: Tanggal dimulainya acara.
-- `end_date`: Tanggal berakhirnya acara.
+* **Jumlah data**: 849 baris
+* **Jumlah kolom**: 3
+* **Missing value**: Tidak ada
 
-### 3. eco_rating.csv (Data Rating Pengguna)
-
-File ini memuat penilaian atau rating dari pengguna terhadap destinasi wisata tertentu. Data ini sangat penting untuk membangun sistem rekomendasi berbasis collaborative filtering.
-
-- **Jumlah data**: 10.000 baris
-- **Jumlah kolom**: 3
-- **Missing value**: Tidak ada
-
-| No  | Nama Kolom | Tipe Data |
-| --- | ---------- | --------- |
-| 0   | user_id    | int64     |
-| 1   | place_id   | int64     |
-| 2   | rating     | int64     |
-
-**Deskripsi Fitur:**
-
-- `user_id`: ID unik pengguna.
-- `place_id`: ID tempat wisata yang dinilai (mengacu ke `eco_place.csv`).
-- `rating`: Skor rating yang diberikan (dalam skala 1–5).
+| No | Nama Kolom    | Tipe Data | Keterangan                                      |
+| -- | ------------- | --------- | ----------------------------------------------- |
+| 0  | `user_id`     | int64     | ID unik pengguna yang memberikan rating         |
+| 1  | `place_id`    | int64     | ID destinasi wisata yang dinilai                |
+| 2  | `user_rating` | int64     | Nilai rating yang diberikan oleh pengguna (1–5) |
 
 
 ## Exploratory Data Analysis (EDA)
