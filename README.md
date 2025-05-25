@@ -143,51 +143,59 @@ Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup
 
 Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destinasi wisata yang paling banyak mendapatkan rating. Meskipun sebuah destinasi populer (memiliki banyak interaksi), tidak selalu berarti destinasi tersebut mendapatkan rating tertinggi.
 
+
 ## Data Preparation
 
-Sebelum masuk ke tahap pemodelan, data perlu dipersiapkan dengan cermat agar hasil yang diperoleh dari sistem rekomendasi bersifat akurat dan relevan. Langkah ini mencakup pembersihan data, transformasi kolom tertentu, serta pembagian data untuk pelatihan dan evaluasi.
+Tahap persiapan data menjadi langkah awal yang sangat penting sebelum membangun sistem rekomendasi. Tujuan utamanya adalah memastikan bahwa data dalam kondisi bersih, lengkap, dan siap digunakan oleh model. Proses ini mencakup beberapa teknik pembersihan, transformasi, hingga pembagian dataset.
 
-### Teknik yang Diterapkan
+### Teknik yang Digunakan
 
-Beberapa metode yang digunakan dalam tahap ini antara lain:
+Berikut beberapa metode utama yang diterapkan dalam tahap ini:
 
-1. **Penghapusan Duplikasi dan Penanganan Data Kosong**
-   Data yang memiliki entri ganda atau nilai kosong dibersihkan atau diisi sesuai konteks. Hal ini dilakukan untuk menjaga konsistensi dan kualitas dataset.
+* **Menghapus Duplikasi dan Menangani Data Kosong**
 
-2. **Konversi ID menjadi Nilai Numerik (Label Encoding)**
-   Kolom `user_id` dan `place_id` yang awalnya berupa teks atau string diubah menjadi angka menggunakan Label Encoding, agar dapat diproses oleh model machine learning.
+  Baris yang terduplikasi atau memiliki nilai kosong dibersihkan atau diisi sesuai konteks agar tidak mengganggu performa model. Misalnya, jika kolom `price` kosong, diasumsikan bahwa tempat tersebut gratis sehingga diisi dengan nilai nol.
 
-3. **Transformasi Teks Deskriptif dengan TF-IDF**
-   Deskripsi dari tempat wisata diolah menjadi vektor numerik menggunakan TF-IDF (Term Frequency - Inverse Document Frequency), agar bisa dihitung kemiripannya dengan tempat lain.
+* **Label Encoding untuk Kolom ID**
 
-4. **Split Dataset untuk Training dan Validation**
-   Data interaksi pengguna dengan tempat wisata dibagi menjadi dua bagian: satu digunakan untuk melatih model, dan satu lagi untuk mengukur performa prediksinya.
+  Karena model machine learning membutuhkan input numerik, maka kolom seperti `user_id` dan `place_id` yang awalnya berupa teks diubah menjadi angka dengan teknik Label Encoding.
 
-### Langkah-Langkah Proses
+* **Representasi Teks Menggunakan TF-IDF**
 
-1. **Menggabungkan Dataset**
-   Dua file utama yang digunakan adalah `eco_rating.csv` (berisi penilaian pengguna terhadap destinasi) dan `eco_place.csv` (memuat informasi konten tiap tempat). Keduanya digabungkan berdasarkan `place_id` untuk memperkaya data.
+  Deskripsi tempat wisata, nama destinasi, dan kategori dikonversi menjadi bentuk numerik menggunakan metode TF-IDF, agar sistem dapat menganalisis kontennya dan menghitung kemiripan antar destinasi.
 
-2. **Pembersihan Duplikat dan Nilai Kosong**
-   Menggunakan fungsi `drop_duplicates()` untuk menghapus entri yang sama, serta `dropna()` untuk menghapus baris yang tidak memiliki data penting. Pada kolom `price`, nilai kosong diisi dengan nol (diasumsikan sebagai tempat wisata tanpa biaya masuk).
+* **Pembagian Dataset**
 
-3. **Encoding pada Kolom ID**
-   Untuk keperluan pemodelan berbasis matriks atau embedding, kolom `user_id` dan `place_id` dikodekan menjadi bilangan unik menggunakan `LabelEncoder`.
+  Dataset interaksi pengguna dibagi menjadi dua bagian: data pelatihan dan data validasi. Ini berguna untuk mengevaluasi seberapa baik model bekerja di luar data yang sudah dikenalnya.
 
-4. **Vektorisasi Deskripsi Tempat**
-   Kolom `place_description` digabung dengan `category` dan `place_name`, lalu diproses menggunakan `TfidfVectorizer`. Tujuannya adalah mengubah informasi tekstual menjadi format numerik yang bisa digunakan dalam model berbasis konten.
+### Alur Tahapan
 
-5. **Pemisahan Data untuk Pelatihan dan Evaluasi**
-   Dataset kemudian dibagi menggunakan `train_test_split` menjadi data latih dan data validasi. Ini bertujuan untuk menghindari overfitting dan mengevaluasi performa model secara objektif.
+* **Membaca dan Menggabungkan Dataset**
 
-### Manfaat dari Tahapan Ini
+   Dataset yang digunakan terdiri dari dua file, yakni `eco_rating.csv` yang berisi rating dari pengguna terhadap tempat wisata, serta `eco_place.csv` yang memuat informasi deskriptif tentang destinasi. Kedua file digabung melalui kolom `place_id`.
 
-1. **Membersihkan data** dari noise dan inkonsistensi menjadikan input model lebih dapat diandalkan.
-2. **Label encoding** penting agar ID bisa digunakan dalam pembelajaran mesin yang mengandalkan input numerik.
-3. **TF-IDF** memungkinkan sistem memahami konten tempat wisata secara kontekstual.
-4. **Splitting data** berguna untuk menilai kinerja model dalam memprediksi preferensi pengguna baru atau tempat yang belum pernah dinilai sebelumnya.
+* **Pembersihan Data**
 
+  Fungsi `drop_duplicates()` digunakan untuk menghapus baris yang muncul lebih dari sekali, sedangkan `dropna()` membantu menghilangkan baris yang memiliki nilai kosong. Pengisian nilai kosong juga dilakukan pada kolom tertentu seperti `price`.
 
+* **Transformasi ID Menjadi Angka**
+
+  Untuk mempermudah pemrosesan oleh algoritma machine learning, `LabelEncoder` diterapkan pada kolom `user_id` dan `place_id` agar menjadi nilai numerik unik.
+
+* **Ekstraksi Fitur Teks dengan TF-IDF**
+
+  Kolom teks seperti `place_description`, `category`, dan `place_name` digabung dan diproses menggunakan `TfidfVectorizer` guna menghasilkan representasi angka dari informasi konten tiap tempat wisata.
+
+* **Membagi Dataset**
+
+  Dataset dibagi menggunakan `train_test_split` menjadi dua bagian: satu untuk melatih model, dan satu lagi untuk menguji performanya pada data baru. Langkah ini penting untuk menghindari overfitting.
+
+### Tujuan dari Data Preparation
+
+* **Meningkatkan kualitas data** dengan menghapus entri duplikat dan nilai yang tidak lengkap.
+* **Mempersiapkan data kategorikal** dalam format numerik agar dapat diterima oleh algoritma.
+* **Menerjemahkan informasi deskriptif** ke dalam bentuk vektor numerik untuk digunakan pada sistem rekomendasi berbasis konten.
+* **Mengukur performa model secara objektif** melalui pemisahan data latih dan uji.
 
 ========================================================================
 ## Modeling
