@@ -126,6 +126,51 @@ File ini memuat penilaian atau rating dari pengguna terhadap destinasi wisata te
 - `place_id`: ID tempat wisata yang dinilai (mengacu ke `eco_place.csv`).
 - `rating`: Skor rating yang diberikan (dalam skala 1–5).
 
+
+## Exploratory Data Analysis (EDA)
+
+Tahap eksplorasi data ini dilakukan untuk memahami karakteristik umum dari dataset destinasi ekowisata Indonesia, termasuk distribusi kategori wisata, sebaran geografis, serta perilaku pengguna berdasarkan data rating. Visualisasi dilakukan untuk mendukung proses pemodelan sistem rekomendasi secara lebih informatif.
+
+### 1. Distribusi Kategori Destinasi Wisata
+
+![Distribusi Kategori Wisata](img/kategori_wisata.png)
+
+Grafik ini menunjukkan distribusi jumlah destinasi berdasarkan kategorinya. Terlihat bahwa kategori Alam mendominasi jumlah destinasi wisata dalam dataset ini, diikuti oleh kategori Budaya dan Edukasi. Beberapa kategori lain seperti Bahari, Religi, dan Urban tercatat dalam jumlah lebih kecil. Hal ini menegaskan bahwa ekowisata di Indonesia masih sangat terpusat pada aspek keindahan alam dan konservasi lingkungan.
+
+
+### 2. Sebaran Destinasi Berdasarkan Kota
+
+![Distribusi Kota](img/sebaran_kota.png)
+
+Visualisasi ini memperlihatkan jumlah destinasi wisata berdasarkan kota atau kabupaten. **Yogyakarta** dan **Bandung** menjadi dua kota dengan jumlah destinasi terbanyak, mengindikasikan tingginya potensi wisata di daerah tersebut. Di sisi lain, beberapa kota seperti **Ambon** dan **Kupang** hanya memiliki sedikit destinasi dalam dataset, yang mungkin disebabkan oleh keterbatasan data atau kurangnya dokumentasi wisata digital di wilayah timur Indonesia.
+
+
+### 3. Distribusi Durasi Kunjungan Wisata
+
+![Durasi Kunjungan](img/durasi_kunjungan.png)
+
+Durasi kunjungan wisata (dalam satuan menit) umumnya berkisar antara 60 hingga 120 menit, dengan puncaknya di durasi 90 menit. Hal ini menggambarkan bahwa sebagian besar wisatawan menghabiskan waktu yang relatif sedang untuk menjelajahi lokasi wisata alam. Durasi yang sangat singkat (<30 menit) tercatat sangat jarang, yang masuk akal mengingat sebagian besar lokasi wisata membutuhkan waktu tempuh dan eksplorasi lebih lama.
+
+### 4. Distribusi Destinasi Berdasarkan Latitude
+
+![Sebaran Latitude](img/sebaran_latitude.png)
+
+Sebaran geografis destinasi wisata dalam dataset ini dikelompokkan berdasarkan rentang latitude. Rentang (-8.5, -7.5) mencatat jumlah destinasi terbanyak, mengindikasikan konsentrasi wisata alam di wilayah Jawa bagian tengah dan selatan. Sementara itu, wilayah dengan latitude lebih utara atau selatan dari rentang tersebut menunjukkan jumlah destinasi yang lebih sedikit. Distribusi ini mencerminkan penyebaran ekowisata yang masih terkonsentrasi di wilayah tertentu.
+
+
+### 5. Interaksi Pengguna per Destinasi (place\_id)
+
+![Interaksi Place ID](img/interaksi_placeid.png)
+
+Grafik ini menunjukkan frekuensi interaksi pengguna (rating) terhadap masing-masing destinasi. Beberapa `place_id`, seperti ID 15 dan ID 22, menerima jumlah rating jauh lebih tinggi dibandingkan lainnya, yang menandakan popularitas tempat tersebut di kalangan pengguna. Mayoritas destinasi lainnya memiliki interaksi yang cukup merata di kisaran 10–20 ulasan. Pola ini dapat dimanfaatkan dalam pendekatan collaborative filtering untuk merekomendasikan destinasi berdasarkan destinasi populer di antara pengguna lain.
+
+
+### 6. Distribusi Nilai Rating dari Pengguna
+
+![Distribusi Rating](img/distribusi_rating.png)
+
+Rating yang diberikan pengguna berkisar dari 1 hingga 5. Menariknya, rating 4 menjadi yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mengindikasikan bahwa mayoritas pengguna merasa cukup puas terhadap pengalaman wisata mereka. Sementara itu, rating 1 dan 2 hanya muncul dalam jumlah kecil, menunjukkan bahwa destinasi yang tersedia dalam dataset cenderung memiliki kualitas pelayanan atau daya tarik yang cukup baik.
+
 ## Data Preparation
 
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
