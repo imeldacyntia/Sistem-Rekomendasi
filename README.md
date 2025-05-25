@@ -182,10 +182,10 @@ Beberapa metode yang digunakan dalam tahap ini antara lain:
 
 ### Manfaat dari Tahapan Ini
 
-* **Membersihkan data** dari noise dan inkonsistensi menjadikan input model lebih dapat diandalkan.
-* **Label encoding** penting agar ID bisa digunakan dalam pembelajaran mesin yang mengandalkan input numerik.
-* **TF-IDF** memungkinkan sistem memahami konten tempat wisata secara kontekstual.
-* **Splitting data** berguna untuk menilai kinerja model dalam memprediksi preferensi pengguna baru atau tempat yang belum pernah dinilai sebelumnya.
+1. **Membersihkan data** dari noise dan inkonsistensi menjadikan input model lebih dapat diandalkan.
+2. **Label encoding** penting agar ID bisa digunakan dalam pembelajaran mesin yang mengandalkan input numerik.
+3. **TF-IDF** memungkinkan sistem memahami konten tempat wisata secara kontekstual.
+4. **Splitting data** berguna untuk menilai kinerja model dalam memprediksi preferensi pengguna baru atau tempat yang belum pernah dinilai sebelumnya.
 
 
 
