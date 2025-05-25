@@ -143,16 +143,53 @@ Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup
 
 Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destinasi wisata yang paling banyak mendapatkan rating. Meskipun sebuah destinasi populer (memiliki banyak interaksi), tidak selalu berarti destinasi tersebut mendapatkan rating tertinggi.
 
-======================================================================================================================
 ## Data Preparation
 
-Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
+Sebelum masuk ke tahap pemodelan, data perlu dipersiapkan dengan cermat agar hasil yang diperoleh dari sistem rekomendasi bersifat akurat dan relevan. Langkah ini mencakup pembersihan data, transformasi kolom tertentu, serta pembagian data untuk pelatihan dan evaluasi.
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
+### Teknik yang Diterapkan
 
-- Menjelaskan proses data preparation yang dilakukan
-- Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
+Beberapa metode yang digunakan dalam tahap ini antara lain:
 
+1. **Penghapusan Duplikasi dan Penanganan Data Kosong**
+   Data yang memiliki entri ganda atau nilai kosong dibersihkan atau diisi sesuai konteks. Hal ini dilakukan untuk menjaga konsistensi dan kualitas dataset.
+
+2. **Konversi ID menjadi Nilai Numerik (Label Encoding)**
+   Kolom `user_id` dan `place_id` yang awalnya berupa teks atau string diubah menjadi angka menggunakan Label Encoding, agar dapat diproses oleh model machine learning.
+
+3. **Transformasi Teks Deskriptif dengan TF-IDF**
+   Deskripsi dari tempat wisata diolah menjadi vektor numerik menggunakan TF-IDF (Term Frequency - Inverse Document Frequency), agar bisa dihitung kemiripannya dengan tempat lain.
+
+4. **Split Dataset untuk Training dan Validation**
+   Data interaksi pengguna dengan tempat wisata dibagi menjadi dua bagian: satu digunakan untuk melatih model, dan satu lagi untuk mengukur performa prediksinya.
+
+### Langkah-Langkah Proses
+
+1. **Mengimpor dan Menggabungkan Dataset**
+   Dua file utama yang digunakan adalah `eco_rating.csv` (berisi penilaian pengguna terhadap destinasi) dan `eco_place.csv` (memuat informasi konten tiap tempat). Keduanya digabungkan berdasarkan `place_id` untuk memperkaya data.
+
+2. **Pembersihan Duplikat dan Nilai Kosong**
+   Menggunakan fungsi `drop_duplicates()` untuk menghapus entri yang sama, serta `dropna()` untuk menghapus baris yang tidak memiliki data penting. Pada kolom `price`, nilai kosong diisi dengan nol (diasumsikan sebagai tempat wisata tanpa biaya masuk).
+
+3. **Encoding pada Kolom ID**
+   Untuk keperluan pemodelan berbasis matriks atau embedding, kolom `user_id` dan `place_id` dikodekan menjadi bilangan unik menggunakan `LabelEncoder`.
+
+4. **Vektorisasi Deskripsi Tempat**
+   Kolom `place_description` digabung dengan `category` dan `place_name`, lalu diproses menggunakan `TfidfVectorizer`. Tujuannya adalah mengubah informasi tekstual menjadi format numerik yang bisa digunakan dalam model berbasis konten.
+
+5. **Pemisahan Data untuk Pelatihan dan Evaluasi**
+   Dataset kemudian dibagi menggunakan `train_test_split` menjadi data latih dan data validasi. Ini bertujuan untuk menghindari overfitting dan mengevaluasi performa model secara objektif.
+
+### Manfaat dari Tahapan Ini
+
+* **Membersihkan data** dari noise dan inkonsistensi menjadikan input model lebih dapat diandalkan.
+* **Label encoding** penting agar ID bisa digunakan dalam pembelajaran mesin yang mengandalkan input numerik.
+* **TF-IDF** memungkinkan sistem memahami konten tempat wisata secara kontekstual.
+* **Splitting data** berguna untuk menilai kinerja model dalam memprediksi preferensi pengguna baru atau tempat yang belum pernah dinilai sebelumnya.
+
+
+
+========================================================================
 ## Modeling
 
 Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
