@@ -183,10 +183,94 @@ Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup
 * Membersihkan format penulisan: Supaya nilai dalam `price` dikenali sebagai angka, bukan string.
 * Mereplace value dan drop kolom tidak relevan: Untuk menyederhanakan data hanya pada fitur yang relevan dan signifikan bagi sistem rekomendasi berbasis konten maupun kolaboratif.
 
-========================================================================
+
 ## Modeling
 
-Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
+Pada tahap ini, sistem rekomendasi destinasi wisata di Indonesia dikembangkan menggunakan dua pendekatan utama: Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan memiliki karakteristik, parameter, kelebihan, dan kekurangan tersendiri dalam menghasilkan rekomendasi. Selain itu, ditampilkan juga hasil top-N recommendation untuk memberikan gambaran konkret dari output sistem.
+
+### 1. Model Sistem Rekomendasi Content-Based Filtering
+Content-Based Filtering bekerja dengan menganalisis atribut atau fitur deskriptif dari masing-masing destinasi wisata dan memberikan rekomendasi berdasarkan kemiripan konten antar destinasi. Dalam proyek ini, model dibangun dengan mengandalkan informasi dari kolom category yang merepresentasikan jenis wisata dari setiap destinasi.
+
+#### Parameter yang Digunakan:
+
+* Fitur teks: Kolom category dari setiap destinasi.
+* TF-IDF Vectorizer: Mengubah data kategori menjadi representasi numerik berbasis teks.
+
+  * `ngram_range=(1, 2)`
+  * `stop_words='english'`
+  * `max_features=5000`
+* Cosine Similarity: Untuk menghitung kemiripan antar destinasi berdasarkan nilai TF-IDF.
+
+#### Tahapan Proses:
+
+* Preprocessing kategori: 
+
+  * Konversi teks menjadi huruf kecil.
+  * Pembersihan simbol.
+
+ * Ekstraksi fitur dengan TF-IDF:
+
+   * TF-IDF diterapkan pada kolom category.
+   * Menghasilkan matriks TF-IDF berdimensi.
+
+* Perhitungan Similarity:
+   * Menggunakan Cosine Similarity antar vektor TF-IDF untuk menentukan seberapa mirip kategori suatu destinasi dengan destinasi lainnya.
+
+#### Interaksi Pengguna:
+
+Pengguna cukup memilih atau memasukkan satu destinasi yang disukai. Sistem akan mencari dan merekomendasikan destinasi-destinasi lain yang memiliki kategori serupa, berdasarkan nilai kemiripan (cosine similarity) tertinggi.
+
+#### Top-N Recommendation Content Based Filtering
+
+Model menghasilkan daftar Top-N destinasi wisata yang paling mirip dengan input pengguna, disusun berdasarkan skor kemiripan tertinggi. Rekomendasi ini membantu pengguna menemukan alternatif wisata yang relevan dengan preferensi mereka, seperti kategori wisata dan kota tujuan.
+
+##### Cara Kerja Algoritma:
+
+* Pengguna memasukkan kategori wisata (misalnya: budaya, cagar alam).
+
+* (Opsional) Pengguna dapat memasukkan nama kota untuk memfilter hasil rekomendasi.
+
+* Sistem menghitung kemiripan antar destinasi berdasarkan vektor TF-IDF dari kategori, menggunakan cosine similarity.
+
+* Sistem mengembalikan Top-N rekomendasi teratas yang paling relevan.
+
+##### Contoh Interaksi dan Output:
+
+**Input Pengguna**:
+
+Masukkan kategori wisata (contoh: budaya, cagar alam): budaya
+
+Masukkan nama kota (opsional, tekan Enter jika ingin semua kota): bandung
+
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
+
+**Rekomendasi Destinasi Wisata**:
+| No | place\_name                  | category           | city    |
+| -- | ---------------------------- | ------------------ | ------- |
+| 1  | Stone Garden Citatah         | Budaya, Cagar Alam | Bandung |
+| 2  | Taman Wisata Alam Cikole     | Budaya, Cagar Alam | Bandung |
+| 3  | Taman Kupu-Kupu Cihanjuang   | Budaya, Cagar Alam | Bandung |
+| 4  | Gua Pawon                    | Budaya, Cagar Alam | Bandung |
+| 5  | Taman Wisata Alam Ranca Upas | Budaya, Cagar Alam | Bandung |
+
+**Input Pengguna Lain**:
+
+Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
+
+Masukkan nama kota (opsional, tekan Enter jika ingin semua kota):
+
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
+
+**Rekomendasi Destinasi Wisata**:
+| No | place\_name                     | category   | city     |
+| -- | ------------------------------- | ---------- | -------- |
+| 1  | Air Terjun Semirang             | Cagar Alam | Semarang |
+| 2  | Danau Rawa Pening               | Cagar Alam | Semarang |
+| 3  | Bukit Jamur                     | Cagar Alam | Bandung  |
+| 4  | Brown Canyon                    | Cagar Alam | Semarang |
+| 5  | Hutan Wisata Tinjomoyo Semarang | Cagar Alam | Semarang |
+
+========================================================================
 
 **Rubrik/Kriteria Tambahan (Opsional)**:
 
