@@ -35,7 +35,7 @@ Idrus, S. H., Jaya, L. M. G., Yusuf, M., & Rijal, M. (2024). Evaluation of the I
 Untuk mencapai tujuan di atas, sistem akan dikembangkan dengan mengimplementasikan lebih dari satu pendekatan rekomendasi yang saling melengkapi:
 
 1. Content-Based Filtering
-   Menganalisis karakteristik destinasi yang pernah disukai pengguna, seperti kategori, deskripsi, dan lokasi geografis. Sistem kemudian merekomendasikan destinasi lain dengan fitur serupa.
+   Menganalisis karakteristik destinasi yang pernah disukai pengguna, seperti kategori dan kota. Sistem kemudian merekomendasikan destinasi lain dengan fitur serupa.
 
 2. Collaborative Filtering
    Membangun sistem berdasarkan penilaian atau rating dari pengguna lain. Sistem ini akan menyarankan destinasi yang disukai oleh pengguna dengan preferensi yang mirip, meskipun belum pernah dikunjungi oleh pengguna tersebut.
