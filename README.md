@@ -146,32 +146,44 @@ Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup
 Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang **kamu** lakukan dalam proyek sistem rekomendasi ekowisata, disusun agar sejalan dengan struktur milik temanmu:
 
 
-### Data Preparation
+## Data Preparation
 
-#### Teknik Data Preparation
+### Teknik Data Preparation
 
-* Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
-* Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
-* Handling Missing Values: Menghapus nilai kosong (`NaN`) serta mengisi nilai kosong pada kolom `price` dengan angka 0.
-* Membersihkan format penulisan: Menghapus simbol non-numerik pada kolom `price`.
-* Menghapus kolom yang tidak relevan untuk sistem rekomendasi.
-* Mengonversi beberapa kolom menjadi list (opsional).
+* **Menggabungkan dataset** rating dan data tempat wisata menggunakan `place_id`.
+* **Removing Duplicates**: Menghapus data duplikat berdasarkan `place_id`.
+* **Handling Missing Values**:
 
-#### Proses Data Preparation
+  * Menghapus nilai kosong (NaN) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`.
+  * Menghapus baris yang memiliki nilai kosong pada kolom gambar `gallery_photo_img2` dan `gallery_photo_img3`, karena gambar digunakan dalam fitur deskriptif tempat wisata.
+  * Mengganti nilai `'-'` dan nilai kosong di kolom `price` dengan `0`.
+* **Membersihkan format penulisan**: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik.
+* **Menghapus kolom yang tidak relevan** untuk sistem rekomendasi, seperti gambar dan peta.
+* **Mengonversi beberapa kolom menjadi list** (opsional, digunakan untuk keperluan transformasi lanjutan).
 
-* Menggabungkan `df_rating` dan `df_place` menggunakan `pd.merge()` berdasarkan `place_id`.
-* Menghapus baris duplikat berdasarkan `place_id` dengan `drop_duplicates()`.
-* Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan 0, lalu menghapus karakter non-numerik dan mengonversinya ke tipe `float`.
-* Menghapus kolom yang tidak digunakan dalam model rekomendasi seperti `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`, `place_map`, dan `description_location`.
-* Semua kolom dipastikan bebas dari nilai kosong dan siap digunakan dalam tahap selanjutnya.
-* Mengonversi kolom `place_id`, `place_name`, `user_id`, dan `user_rating` menjadi list.
+### Proses Data Preparation
 
-#### Alasan Tahapan Data Preparation
+1. Menggabungkan `df_rating` dan `df_place` menggunakan `pd.merge()` berdasarkan `place_id`.
+2. Menghapus baris duplikat berdasarkan `place_id` menggunakan `drop_duplicates()`.
+3. Menghapus baris dengan nilai kosong pada kolom penting (`user_id`, `place_id`, `user_rating`) dan kolom gambar (`gallery_photo_img2`, `gallery_photo_img3`).
+4. Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan `0`, lalu membersihkan karakter non-numerik dan mengonversinya ke tipe `float`.
+5. Menghapus kolom yang tidak digunakan dalam model rekomendasi seperti:
 
-* Removing Duplicates: Menghindari bias karena data tempat wisata yang berulang.
-* Handling Missing Values: Untuk memastikan tidak ada data kosong yang mengganggu proses training model rekomendasi.
-* Membersihkan format penulisan: Agar nilai numerik pada kolom `price` terbaca dengan benar sebagai angka.
-* Mereplace value dan drop kolom: Menyederhanakan data hanya pada fitur yang relevan dan penting bagi sistem rekomendasi berbasis konten.
+   * `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`
+   * `place_map`, dan `description_location`.
+6. Memastikan semua kolom bebas dari nilai kosong dan siap digunakan dalam tahap selanjutnya.
+7. Mengonversi kolom `place_id`, `place_name`, `user_id`, dan `user_rating` menjadi list.
+
+### Alasan Tahapan Data Preparation
+
+* **Removing Duplicates**: Untuk menghindari bias akibat data tempat wisata yang muncul lebih dari satu kali.
+* **Handling Missing Values**:
+
+  * Menghindari kesalahan proses pemodelan akibat nilai kosong.
+  * Gambar galeri dianggap penting sebagai bagian dari fitur deskriptif konten wisata.
+  * Kolom `price` perlu bernilai numerik agar dapat dianalisis dan digunakan dalam sistem rekomendasi.
+* **Membersihkan format penulisan**: Supaya nilai dalam `price` dikenali sebagai angka, bukan string.
+* **Mereplace value dan drop kolom tidak relevan**: Untuk menyederhanakan data hanya pada fitur yang relevan dan signifikan bagi sistem rekomendasi berbasis konten maupun kolaboratif.
 
 ========================================================================
 ## Modeling
