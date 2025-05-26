@@ -168,8 +168,8 @@ Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang *
 
 #### Alasan Tahapan Data Preparation
 
-* Handling Missing Values: Untuk memastikan tidak ada data kosong yang mengganggu proses training model rekomendasi.
 * Removing Duplicates: Menghindari bias karena data tempat wisata yang berulang.
+* Handling Missing Values: Untuk memastikan tidak ada data kosong yang mengganggu proses training model rekomendasi.
 * Membersihkan format penulisan: Agar nilai numerik pada kolom `price` terbaca dengan benar sebagai angka.
 * Mereplace value dan drop kolom: Menyederhanakan data hanya pada fitur yang relevan dan penting bagi sistem rekomendasi berbasis konten.
 
