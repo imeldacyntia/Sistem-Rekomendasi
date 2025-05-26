@@ -109,7 +109,7 @@ Tahap eksplorasi data ini dilakukan untuk memahami karakteristik umum dari datas
 
 ![Distribusi Kategori Wisata](img/eksplorasi_nama_tempat.png)
 
-Grafik ini menunjukkan jenis tempat wisata yang paling umum berdasarkan pola penamaan. Misalnya, banyak destinasi dimulai dengan "Taman Nasional", "Desa Wisata", atau "Taman Wisata",  menandakan fokus utama ekowisata Indonesia pada wisata alam dan budaya.
+Grafik menampilkan 10 tempat wisata pertama berdasarkan place_id. Urutannya konsisten dengan ID terkecil hingga terbesar, yang mencerminkan urutan input data bukan popularitas atau frekuensi. Ini berguna untuk melihat daftar awal tempat wisata unik dalam dataset, namun belum mencerminkan tempat yang paling banyak dikunjungi atau paling sering muncul.
 
 ### 2. Distribusi Kategori Destinasi Wisata
 
@@ -131,18 +131,17 @@ Kota-kota lain seperti Semarang, Jakarta, Bogor, dan Malang juga masuk dalam daf
 
 Visualisasi interaksi pengguna terhadap destinasi wisata menunjukkan bahwa terdapat beberapa tempat yang jauh lebih populer dibandingkan yang lain, dilihat dari jumlah rating yang diterima. Sepuluh destinasi teratas mencatat jumlah interaksi pengguna yang signifikan, dengan satu atau dua destinasi menonjol secara ekstrem dibandingkan yang lain. Hal ini mengindikasikan bahwa popularitas tidak terdistribusi secara merata, melainkan terkonsentrasi pada beberapa tempat saja
 
-### 5. Distribusi Nilai Rating dari Pengguna
-
-![Distribusi Rating](img/distribusi_rating_pengguna.png)
-
-Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
-
-### 6. Rata-rata Rating pada Destinasi Terpopuler
+### 5. Rata-rata Rating pada Destinasi Terpopuler
 
 ![Distribusi Rating](img/rerata_rating_top10.png)
 
 Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destinasi wisata yang paling banyak mendapatkan rating. Meskipun sebuah destinasi populer (memiliki banyak interaksi), tidak selalu berarti destinasi tersebut mendapatkan rating tertinggi.
 
+### 6. Distribusi Nilai Rating dari Pengguna
+
+![Distribusi Rating](img/distribusi_rating_pengguna.png)
+
+Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
 ## Data Preparation
 
@@ -156,13 +155,9 @@ Berikut beberapa metode utama yang diterapkan dalam tahap ini:
 
   Baris yang terduplikasi atau memiliki nilai kosong dibersihkan atau diisi sesuai konteks agar tidak mengganggu performa model. Misalnya, jika kolom `price` kosong, diasumsikan bahwa tempat tersebut gratis sehingga diisi dengan nilai nol.
 
-* **Label Encoding untuk Kolom ID**
-
-  Karena model machine learning membutuhkan input numerik, maka kolom seperti `user_id` dan `place_id` yang awalnya berupa teks diubah menjadi angka dengan teknik Label Encoding.
-
 * **Representasi Teks Menggunakan TF-IDF**
 
-  Deskripsi tempat wisata, nama destinasi, dan kategori dikonversi menjadi bentuk numerik menggunakan metode TF-IDF, agar sistem dapat menganalisis kontennya dan menghitung kemiripan antar destinasi.
+  Deskripsi tempat wisata, nama destinasi, kategori, dan kota digabung dan dikonversi menjadi bentuk numerik menggunakan TfidfVectorizer, agar sistem dapat menganalisis konten dan menghitung kemiripan antar destinasi.
 
 * **Pembagian Dataset**
 
@@ -176,15 +171,11 @@ Berikut beberapa metode utama yang diterapkan dalam tahap ini:
 
 * **Pembersihan Data**
 
-  Fungsi `drop_duplicates()` digunakan untuk menghapus baris yang muncul lebih dari sekali, sedangkan `dropna()` membantu menghilangkan baris yang memiliki nilai kosong. Pengisian nilai kosong juga dilakukan pada kolom tertentu seperti `price`.
-
-* **Transformasi ID Menjadi Angka**
-
-  Untuk mempermudah pemrosesan oleh algoritma machine learning, `LabelEncoder` diterapkan pada kolom `user_id` dan `place_id` agar menjadi nilai numerik unik.
+  Duplikasi berdasarkan place_id dihapus, kolom price yang kosong atau bertanda '-' diisi dengan 0 dan dibersihkan dari karakter non-angka, serta beberapa kolom visual dan peta yang tidak relevan dihapus.
 
 * **Ekstraksi Fitur Teks dengan TF-IDF**
 
-  Kolom teks seperti `place_description`, `category`, dan `place_name` digabung dan diproses menggunakan `TfidfVectorizer` guna menghasilkan representasi angka dari informasi konten tiap tempat wisata.
+  Kolom place_name, place_description, category, dan city digabung menjadi satu kolom combined_text, lalu diproses dengan TfidfVectorizer untuk menghasilkan representasi numerik dari konten tiap destinasi wisata.
 
 * **Membagi Dataset**
 
@@ -193,7 +184,6 @@ Berikut beberapa metode utama yang diterapkan dalam tahap ini:
 ### Tujuan dari Data Preparation
 
 * **Meningkatkan kualitas data** dengan menghapus entri duplikat dan nilai yang tidak lengkap.
-* **Mempersiapkan data kategorikal** dalam format numerik agar dapat diterima oleh algoritma.
 * **Menerjemahkan informasi deskriptif** ke dalam bentuk vektor numerik untuk digunakan pada sistem rekomendasi berbasis konten.
 * **Mengukur performa model secara objektif** melalui pemisahan data latih dan uji.
 
