@@ -151,8 +151,8 @@ Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang *
 #### Teknik Data Preparation
 
 * Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
-* Handling Missing Values: Menghapus nilai kosong (`NaN`) serta mengisi nilai kosong pada kolom `price` dengan angka 0.
 * Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
+* Handling Missing Values: Menghapus nilai kosong (`NaN`) serta mengisi nilai kosong pada kolom `price` dengan angka 0.
 * Membersihkan format penulisan: Menghapus simbol non-numerik pada kolom `price`.
 * Menghapus kolom yang tidak relevan untuk sistem rekomendasi.
 * Mengonversi beberapa kolom menjadi list (opsional).
