@@ -143,49 +143,35 @@ Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destina
 
 Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
-## Data Preparation
+Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang **kamu** lakukan dalam proyek sistem rekomendasi ekowisata, disusun agar sejalan dengan struktur milik temanmu:
 
-Tahap persiapan data menjadi langkah awal yang sangat penting sebelum membangun sistem rekomendasi. Tujuan utamanya adalah memastikan bahwa data dalam kondisi bersih, lengkap, dan siap digunakan oleh model. Proses ini mencakup beberapa teknik pembersihan, transformasi, hingga pembagian dataset.
 
-### Teknik yang Digunakan
+### Data Preparation
 
-Berikut beberapa metode utama yang diterapkan dalam tahap ini:
+#### Teknik Data Preparation
 
-* **Menghapus Duplikasi dan Menangani Data Kosong**
+* Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
+* Handling Missing Values: Menghapus nilai kosong (`NaN`) serta mengisi nilai kosong pada kolom `price` dengan angka 0.
+* Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
+* Membersihkan format penulisan: Menghapus simbol non-numerik pada kolom `price`.
+* Menghapus kolom yang tidak relevan untuk sistem rekomendasi.
+* Mengonversi beberapa kolom menjadi list (opsional).
 
-  Baris yang terduplikasi atau memiliki nilai kosong dibersihkan atau diisi sesuai konteks agar tidak mengganggu performa model. Misalnya, jika kolom `price` kosong, diasumsikan bahwa tempat tersebut gratis sehingga diisi dengan nilai nol.
+#### Proses Data Preparation
 
-* **Representasi Teks Menggunakan TF-IDF**
+* Menggabungkan `df_rating` dan `df_place` menggunakan `pd.merge()` berdasarkan `place_id`.
+* Menghapus baris duplikat berdasarkan `place_id` dengan `drop_duplicates()`.
+* Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan 0, lalu menghapus karakter non-numerik dan mengonversinya ke tipe `float`.
+* Menghapus kolom yang tidak digunakan dalam model rekomendasi seperti `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`, `place_map`, dan `description_location`.
+* Semua kolom dipastikan bebas dari nilai kosong dan siap digunakan dalam tahap selanjutnya.
+* Mengonversi kolom `place_id`, `place_name`, `user_id`, dan `user_rating` menjadi list.
 
-  Deskripsi tempat wisata, nama destinasi, kategori, dan kota digabung dan dikonversi menjadi bentuk numerik menggunakan TfidfVectorizer, agar sistem dapat menganalisis konten dan menghitung kemiripan antar destinasi.
+#### Alasan Tahapan Data Preparation
 
-* **Pembagian Dataset**
-
-  Dataset interaksi pengguna dibagi menjadi dua bagian: data pelatihan dan data validasi. Ini berguna untuk mengevaluasi seberapa baik model bekerja di luar data yang sudah dikenalnya.
-
-### Alur Tahapan
-
-* **Membaca dan Menggabungkan Dataset**
-
-   Dataset yang digunakan terdiri dari dua file, yakni `eco_rating.csv` yang berisi rating dari pengguna terhadap tempat wisata, serta `eco_place.csv` yang memuat informasi deskriptif tentang destinasi. Kedua file digabung melalui kolom `place_id`.
-
-* **Pembersihan Data**
-
-  Duplikasi berdasarkan place_id dihapus, kolom price yang kosong atau bertanda '-' diisi dengan 0 dan dibersihkan dari karakter non-angka, serta beberapa kolom visual dan peta yang tidak relevan dihapus.
-
-* **Ekstraksi Fitur Teks dengan TF-IDF**
-
-  Kolom place_name, place_description, category, dan city digabung menjadi satu kolom combined_text, lalu diproses dengan TfidfVectorizer untuk menghasilkan representasi numerik dari konten tiap destinasi wisata.
-
-* **Membagi Dataset**
-
-  Dataset dibagi menggunakan `train_test_split` menjadi dua bagian: satu untuk melatih model, dan satu lagi untuk menguji performanya pada data baru. Langkah ini penting untuk menghindari overfitting.
-
-### Tujuan dari Data Preparation
-
-* **Meningkatkan kualitas data** dengan menghapus entri duplikat dan nilai yang tidak lengkap.
-* **Menerjemahkan informasi deskriptif** ke dalam bentuk vektor numerik untuk digunakan pada sistem rekomendasi berbasis konten.
-* **Mengukur performa model secara objektif** melalui pemisahan data latih dan uji.
+* Handling Missing Values: Untuk memastikan tidak ada data kosong yang mengganggu proses training model rekomendasi.
+* Removing Duplicates: Menghindari bias karena data tempat wisata yang berulang.
+* Membersihkan format penulisan: Agar nilai numerik pada kolom `price` terbaca dengan benar sebagai angka.
+* Mereplace value dan drop kolom: Menyederhanakan data hanya pada fitur yang relevan dan penting bagi sistem rekomendasi berbasis konten.
 
 ========================================================================
 ## Modeling
