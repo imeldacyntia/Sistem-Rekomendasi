@@ -143,23 +143,21 @@ Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destina
 
 Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
-Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang **kamu** lakukan dalam proyek sistem rekomendasi ekowisata, disusun agar sejalan dengan struktur milik temanmu:
-
 
 ## Data Preparation
 
 ### Teknik Data Preparation
 
-* **Menggabungkan dataset** rating dan data tempat wisata menggunakan `place_id`.
-* **Removing Duplicates**: Menghapus data duplikat berdasarkan `place_id`.
-* **Handling Missing Values**:
+* Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
+* Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
+* Handling Missing Values:
 
   * Menghapus nilai kosong (NaN) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`.
   * Menghapus baris yang memiliki nilai kosong pada kolom gambar `gallery_photo_img2` dan `gallery_photo_img3`, karena gambar digunakan dalam fitur deskriptif tempat wisata.
   * Mengganti nilai `'-'` dan nilai kosong di kolom `price` dengan `0`.
-* **Membersihkan format penulisan**: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik.
-* **Menghapus kolom yang tidak relevan** untuk sistem rekomendasi, seperti gambar dan peta.
-* **Mengonversi beberapa kolom menjadi list** (opsional, digunakan untuk keperluan transformasi lanjutan).
+* Membersihkan format penulisan: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik.
+* Menghapus kolom yang tidak relevan untuk sistem rekomendasi, seperti gambar dan peta.
+* Mengonversi beberapa kolom menjadi list.
 
 ### Proses Data Preparation
 
@@ -176,14 +174,14 @@ Berikut adalah versi **penyesuaian Data Preparation** berdasarkan tahapan yang *
 
 ### Alasan Tahapan Data Preparation
 
-* **Removing Duplicates**: Untuk menghindari bias akibat data tempat wisata yang muncul lebih dari satu kali.
-* **Handling Missing Values**:
+* Removing Duplicates: Untuk menghindari bias akibat data tempat wisata yang muncul lebih dari satu kali.
+* Handling Missing Values:
 
   * Menghindari kesalahan proses pemodelan akibat nilai kosong.
   * Gambar galeri dianggap penting sebagai bagian dari fitur deskriptif konten wisata.
   * Kolom `price` perlu bernilai numerik agar dapat dianalisis dan digunakan dalam sistem rekomendasi.
-* **Membersihkan format penulisan**: Supaya nilai dalam `price` dikenali sebagai angka, bukan string.
-* **Mereplace value dan drop kolom tidak relevan**: Untuk menyederhanakan data hanya pada fitur yang relevan dan signifikan bagi sistem rekomendasi berbasis konten maupun kolaboratif.
+* Membersihkan format penulisan: Supaya nilai dalam `price` dikenali sebagai angka, bukan string.
+* Mereplace value dan drop kolom tidak relevan: Untuk menyederhanakan data hanya pada fitur yang relevan dan signifikan bagi sistem rekomendasi berbasis konten maupun kolaboratif.
 
 ========================================================================
 ## Modeling
