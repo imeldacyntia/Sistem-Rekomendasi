@@ -107,19 +107,19 @@ Tahap eksplorasi data ini dilakukan untuk memahami karakteristik umum dari datas
 
 ### 1. Eksplorasi Awal Tempat Wisata
 
-![Distribusi Kategori Wisata](img/eksplorasi_nama_tempat.png)
+![Distribusi Kategori Wisata](images/eksplorasi_nama_tempat.png)
 
 Grafik menampilkan 10 tempat wisata pertama berdasarkan place_id. Urutannya konsisten dengan ID terkecil hingga terbesar, yang mencerminkan urutan input data bukan popularitas atau frekuensi. Ini berguna untuk melihat daftar awal tempat wisata unik dalam dataset, namun belum mencerminkan tempat yang paling banyak dikunjungi atau paling sering muncul.
 
 ### 2. Distribusi Kategori Destinasi Wisata
 
-![Distribusi Kategori Wisata](img/kategori_wisata.png)
+![Distribusi Kategori Wisata](images/kategori_wisata.png)
 
 Grafik ini menunjukkan distribusi jumlah destinasi berdasarkan kategori individualnya. Terlihat bahwa kategori Cagar Alam mendominasi jumlah destinasi wisata dalam dataset ini, disusul oleh kategori Budaya, Bahari, dan Taman Nasional. Beberapa kategori lain seperti Taman Hiburan dan Desa Wisata tercatat dalam jumlah yang lebih kecil. Temuan ini memperkuat bahwa fokus utama pengembangan ekowisata di Indonesia masih sangat terpusat pada aspek keindahan alam, pelestarian lingkungan, serta nilai-nilai budaya lokal.
 
 ### 3. Sebaran Destinasi Berdasarkan Kota
 
-![Distribusi Kota](img/sebaran_kota.png)
+![Distribusi Kota](images/sebaran_kota.png)
 
 Visualisasi ini memperlihatkan 10 kota atau kabupaten dengan jumlah destinasi wisata terbanyak dalam dataset. Yogyakarta secara signifikan mendominasi dengan 53 destinasi, disusul oleh Bandung sebanyak 36 destinasi. Hal ini menunjukkan tingginya daya tarik wisata dan dokumentasi yang kuat di kedua kota tersebut, terutama dalam sektor budaya, alam, dan ekowisata.
 
@@ -127,19 +127,19 @@ Kota-kota lain seperti Semarang, Jakarta, Bogor, dan Malang juga masuk dalam daf
 
 ### 4. Interaksi Pengguna per Destinasi
 
-![Interaksi Place ID](img/interaksi_placeid.png)
+![Interaksi Place ID](images/interaksi_placeid.png)
 
 Visualisasi interaksi pengguna terhadap destinasi wisata menunjukkan bahwa terdapat beberapa tempat yang jauh lebih populer dibandingkan yang lain, dilihat dari jumlah rating yang diterima. Sepuluh destinasi teratas mencatat jumlah interaksi pengguna yang signifikan, dengan satu atau dua destinasi menonjol secara ekstrem dibandingkan yang lain. Hal ini mengindikasikan bahwa popularitas tidak terdistribusi secara merata, melainkan terkonsentrasi pada beberapa tempat saja
 
 ### 5. Rata-rata Rating pada Destinasi Terpopuler
 
-![Distribusi Rating](img/rerata_rating_top10.png)
+![Distribusi Rating](images/rerata_rating_top10.png)
 
 Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destinasi wisata yang paling banyak mendapatkan rating. Meskipun sebuah destinasi populer (memiliki banyak interaksi), tidak selalu berarti destinasi tersebut mendapatkan rating tertinggi.
 
 ### 6. Distribusi Nilai Rating dari Pengguna
 
-![Distribusi Rating](img/distribusi_rating_pengguna.png)
+![Distribusi Rating](images/distribusi_rating_pengguna.png)
 
 Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
