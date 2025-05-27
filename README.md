@@ -257,9 +257,26 @@ Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 
 Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
 
+Masukkan nama kota (opsional, tekan Enter jika ingin semua kota): yogyakarta
+
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
+
+**Rekomendasi Destinasi Wisata**:
+| No | place\_name                  | category           | city       |
+| -- | ---------------------------- | ------------------ | ---------- |
+| 1  | Stone Garden Citatah         | Bahari, Cagar Alam | Yogyakarta |
+| 2  | Taman Wisata Alam Cikole     | Bahari, Cagar Alam | Yogyakarta |
+| 3  | Taman Kupu-Kupu Cihanjuang   | Bahari, Cagar Alam | Yogyakarta |
+| 4  | Gua Pawon                    | Bahari, Cagar Alam | Yogyakarta |
+| 5  | Taman Wisata Alam Ranca Upas | Bahari, Cagar Alam | Yogyakarta |
+
+**Input Pengguna Lain**:
+
+Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
+
 Masukkan nama kota (opsional, tekan Enter jika ingin semua kota):
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): 
 
 **Rekomendasi Destinasi Wisata**:
 | No | place\_name                     | category   | city     |
