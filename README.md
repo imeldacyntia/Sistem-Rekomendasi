@@ -203,18 +203,43 @@ Content-Based Filtering bekerja dengan menganalisis atribut atau fitur deskripti
 
 #### Tahapan Proses:
 
-* Preprocessing kategori: 
+**a. Preprocessing kategori:**
 
-  * Konversi teks menjadi huruf kecil.
-  * Pembersihan simbol.
+Melakukan konversi teks ke huruf kecil dan menghapus karakter non-huruf.
 
- * Ekstraksi fitur dengan TF-IDF:
+```python
+content_features_df['category'] = content_features_df['category'].str.lower()
+```
 
-   * TF-IDF diterapkan pada kolom category.
-   * Menghasilkan matriks TF-IDF berdimensi.
+**b. Ekstraksi fitur dengan TF-IDF:**
 
-* Perhitungan Similarity:
-   * Menggunakan Cosine Similarity antar vektor TF-IDF untuk menentukan seberapa mirip kategori suatu destinasi dengan destinasi lainnya.
+Membangun representasi numerik dari teks kategori menggunakan TF-IDF Vectorizer.
+
+```python
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(content_features_df['category'])
+```
+
+**c. Perhitungan Similarity:**
+
+Menghitung kemiripan antar destinasi wisata dengan cosine similarity.
+
+```python
+similarity_matrix = cosine_similarity(tfidf_matrix)
+```
+
+**d. Rekomendasi berdasarkan input kategori dan kota:**
+
+Mengambil Top-N destinasi paling mirip berdasarkan kategori dan kota pilihan pengguna.
+
+```python
+rekomendasi = recommender.recommend_by_category_city(
+    selected_category='budaya',
+    selected_city='Yogyakarta',
+    top_n=5,
+    same_city_only=True
+)
+```
 
 #### Interaksi Pengguna:
 
@@ -233,7 +258,7 @@ Model menghasilkan daftar Top-N destinasi wisata yang paling mirip dengan input 
 * Sistem menghitung kemiripan antar destinasi berdasarkan vektor TF-IDF dari kategori, menggunakan cosine similarity.
 
 * Sistem mengembalikan Top-N rekomendasi teratas yang paling relevan.
-
+  
 ##### Contoh Interaksi dan Output:
 
 **Input Pengguna**:
@@ -253,7 +278,7 @@ Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 | 4  | Gua Pawon                    | Budaya, Cagar Alam | Bandung |
 | 5  | Taman Wisata Alam Ranca Upas | Budaya, Cagar Alam | Bandung |
 
-**Input Pengguna Lain**:
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 
 Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
 
@@ -270,13 +295,13 @@ Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 | 4  | Gua Pawon                    | Bahari, Cagar Alam | Yogyakarta |
 | 5  | Taman Wisata Alam Ranca Upas | Bahari, Cagar Alam | Yogyakarta |
 
-**Input Pengguna Lain**:
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 
 Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
 
 Masukkan nama kota (opsional, tekan Enter jika ingin semua kota):
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): 
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
 
 **Rekomendasi Destinasi Wisata**:
 | No | place\_name                     | category   | city     |
@@ -287,12 +312,209 @@ Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n):
 | 4  | Brown Canyon                    | Cagar Alam | Semarang |
 | 5  | Hutan Wisata Tinjomoyo Semarang | Cagar Alam | Semarang |
 
-========================================================================
+Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
+### 2. Model Sistem Rekomendasi Collaborative Filtering 
 
-- Menyajikan dua solusi rekomendasi dengan algoritma yang berbeda.
-- Menjelaskan kelebihan dan kekurangan dari solusi/pendekatan yang dipilih.
+Collaborative Filtering memanfaatkan interaksi pengguna (user) dan item (place\_id) dalam bentuk rating untuk membangun model yang mampu memberikan rekomendasi tempat wisata. Model ini menggunakan pendekatan Matrix Factorization dengan bantuan embedding untuk mewakili hubungan laten antara user dan tempat wisata.
+
+#### Parameter yang Digunakan:
+
+* `embedding_size`: 50
+* `loss`: Mean Squared Error (MSE)
+* `optimizer`: Adam
+* `learning_rate`: default (0.001)
+* `metrics`: Mean Absolute Error (MAE)
+
+#### Tahapan Proses:
+
+**a. Menggunakan Data Interaksi**
+
+   * Dataset: `ratings.csv` dan `cleaned_data.csv`
+   * Data berisi kolom `user_id`, `place_id`, dan `rating`.
+
+**b. Encoding dan Preprocessing**
+
+   * `user_id` dan `place_id` diencode menjadi angka dengan `LabelEncoder`.
+   * Rating dinormalisasi ke skala 0–1 menggunakan MinMaxScaler.
+   * Dataset dibagi menjadi:
+
+     * `x_train`, `y_train` untuk training
+     * `x_valid`, `y_valid` untuk validasi
+
+**c. Membuat Class Model (Matrix Factorization Recommender)**
+
+```python
+class MatrixFactorizationRecommender(tf.keras.Model):
+    ...
+```
+
+Model ini terdiri dari dua layer embedding:
+
+   * `user_embedding` untuk user
+   * `place_embedding` untuk tempat wisata
+  Lalu dilakukan *dot product* dan aktivasi sigmoid untuk memprediksi skor rating.
+
+**d. Inisialisasi dan Kompilasi Model**
+
+```python
+rekomendasi_model = MatrixFactorizationRecommender(
+    num_users=user_total,
+    num_places=place_total,
+    embedding_size=50
+)
+rekomendasi_model.compile(
+    loss='mse',
+    optimizer='adam',
+    metrics=['mae']
+)
+```
+
+**e. Training Model**
+
+```python
+training_log = rekomendasi_model.train(
+    x_train, y_train,
+    x_valid, y_valid,
+    epochs=20,
+    batch_size=64
+)
+```
+
+Selama training, performa model divisualisasikan menggunakan grafik MSE dan MAE per epoch.
+
+#### Interaksi Pengguna 
+
+Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi pada seorang pengguna dari dataset `ratings.csv`.
+
+#### Top-N Recommendation Collaborative Filtering
+
+Model Collaborative Filtering menghasilkan rekomendasi dengan menganalisis pola interaksi pengguna terhadap destinasi wisata yang telah mereka beri rating. Berdasarkan model Matrix Factorization, sistem memprediksi skor rating terhadap destinasi yang belum pernah dikunjungi atau diberi rating oleh pengguna.
+
+Rekomendasi disusun berdasarkan prediksi skor tertinggi dari model, sehingga destinasi dengan kemungkinan besar disukai pengguna akan berada di peringkat atas. Model ini sangat efektif untuk memberikan rekomendasi personalized karena mempertimbangkan kesamaan preferensi antar pengguna yang tidak selalu terlihat dari konten destinasi itu sendiri.
+
+#### Cara Kerja Algoritma:
+
+* Sistem memeriksa destinasi yang belum pernah diberi rating oleh pengguna.
+* Model memprediksi skor rating untuk setiap destinasi tersebut.
+* Sistem menyortir destinasi berdasarkan **nilai prediksi tertinggi**.
+* Top-N destinasi dengan skor prediksi tertinggi
+  
+#### Contoh Interaksi dan Ouput
+
+Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi terhadap salah satu pengguna dalam dataset, yaitu User ID: 129. Berikut adalah hasil interaksi sistem:
+
+**5 Tempat Favorit dari User ID: 129**
+*Berdasarkan rating tertinggi yang telah diberikan oleh pengguna*
+
+| No | Nama Tempat Wisata              |
+| -- | ------------------------------- |
+| 1  | Taman Hutan Raya Ir. H. Djuanda |
+| 2  | Air Terjun Semirang             |
+| 3  | Taman Wisata Alam Ranca Upas    |
+| 4  | Taman Nasional Karimunjawa      |
+| 5  | Pantai Klayar                   |
+
+**10 Rekomendasi Tempat Wisata untuk User ID: 129**
+*Hasil prediksi dari model Collaborative Filtering berdasarkan preferensi pengguna*
+
+| No | Nama Tempat Wisata                  |
+| -- | ----------------------------------- |
+| 1  | Kawah Rengganis Cibuni              |
+| 2  | Kebun Bibit Wonorejo                |
+| 3  | Taman Wisata Alam Ciloto            |
+| 4  | Taman Wisata Alam Gunung Geulis     |
+| 5  | Taman Nasional Bromo Tengger Semeru |
+| 6  | Desa Wisata Munduk                  |
+| 7  | Kampoeng Kopi Banaran               |
+| 8  | Taman Nasional Bali Barat           |
+| 9  | Taman Nasional Berbak               |
+| 10 | Desa Wisata Cinangneng              |
+
+
+### Kelebihan dan Kekurangan
+
+#### **1. Content-Based Filtering**
+
+##### **Kelebihan:**
+
+1. Tidak Bergantung pada Data Interaksi Pengguna
+
+   * Sistem tetap dapat memberikan rekomendasi meskipun tidak ada data rating atau ulasan dari pengguna.
+   * Cocok untuk pengguna baru (cold start) karena rekomendasi berbasis deskripsi konten tempat wisata (kategori, kota).
+
+2. Transparansi Rekomendasi
+
+   * Alasan dibalik setiap rekomendasi bisa dijelaskan dengan mudah karena berdasarkan kemiripan konten (misalnya: sesama tempat "Cagar Alam" di kota yang sama).
+
+3. Personalisasi Spesifik
+
+   * Pengguna dapat menentukan sendiri kategori dan/atau kota, sehingga hasil lebih terarah dan sesuai kebutuhan atau minat eksplisit pengguna.
+
+4. Cepat dan Efisien
+
+   * Karena hanya bergantung pada pencocokan fitur menggunakan cosine similarity, maka komputasi relatif ringan dan cepat dijalankan.
+
+##### **Kekurangan:**
+
+1. Terbatas pada Informasi Konten
+
+   * Rekomendasi hanya berdasarkan kolom `category` dan `city`. Tidak mempertimbangkan faktor-faktor lain seperti popularitas, ulasan, atau pengalaman pengguna lain.
+
+2. Cenderung Terjebak di Zona Nyaman (Serupa Saja)
+
+   * Sistem hanya akan merekomendasikan tempat yang sangat mirip dengan input. Kurang mampu menawarkan alternatif unik yang mungkin juga disukai pengguna.
+
+3. Tidak Bisa Menangani Preferensi Implisit
+
+   * Misalnya, jika pengguna sebenarnya lebih menyukai "wisata alam dengan suasana sejuk", sistem tidak bisa menangkap hal tersebut jika tidak dicantumkan eksplisit dalam kategori.
+
+4. Sensitif terhadap Kualitas Data Fitur
+
+   * Jika data pada kolom kategori tidak konsisten (misalnya ada ejaan berbeda, penggunaan huruf kapital acak), maka kualitas rekomendasi akan menurun.
+
+
+#### **2. Collaborative Filtering **
+
+##### **Kelebihan:**
+
+1. Rekomendasi Personalisasi Tinggi
+
+   * Sistem dapat mengenali pola preferensi pengguna secara mendalam berdasarkan perilaku rating mereka sebelumnya.
+   * Tidak bergantung pada metadata konten (kategori, kota), sehingga dapat merekomendasikan destinasi yang mungkin tidak terpikirkan sebelumnya oleh pengguna.
+
+2. Menangkap Hubungan Tersembunyi
+
+   * Matrix Factorization dapat menemukan hubungan laten antara user dan tempat wisata yang tidak eksplisit terlihat.
+   * Misalnya, sistem bisa tahu bahwa user yang suka A dan B kemungkinan besar akan suka C — meskipun C tidak punya kemiripan konten dengan A atau B.
+
+3. Adaptif terhadap Perubahan Preferensi
+
+   * Jika pengguna mulai memberikan rating ke jenis wisata yang berbeda, model bisa menyesuaikan diri dari waktu ke waktu.
+
+4. Efektif untuk Top-N Recommendation
+
+   * Ideal untuk menghasilkan daftar pendek rekomendasi yang secara statistik paling mungkin disukai pengguna.
+
+##### **Kekurangan:**
+
+1. Cold Start Problem (Pengguna atau Tempat Baru)
+
+   * Sistem tidak dapat memberikan rekomendasi untuk pengguna baru yang belum memberikan rating apa pun (user cold start), atau tempat wisata baru tanpa interaksi (item cold start).
+
+2. Butuh Dataset Interaksi yang Cukup
+
+   * Model membutuhkan volume data rating yang besar dan bervariasi agar bisa belajar dengan baik.
+   * Dataset kecil atau sparsity (banyak tempat yang tidak pernah diberi rating) akan membuat model kurang akurat.
+
+3. Kurang Transparan
+
+   * Rekomendasi sulit dijelaskan secara langsung. Mengapa suatu tempat direkomendasikan tidak selalu jelas bagi pengguna.
+
+4. Kompleksitas Model Lebih Tinggi
+
+   * Dibandingkan Content-Based, Collaborative Filtering memerlukan proses training model, tuning parameter, dan pemrosesan matriks besar yang lebih memakan waktu dan sumber daya komputasi.
+     
 
 ## Evaluation
 
