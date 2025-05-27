@@ -548,9 +548,8 @@ Keterangan:
 
 Berikut adalah grafik hasil pelatihan model berdasarkan metrik **Mean Squared Error (MSE)** dan **Mean Absolute Error (MAE)** untuk data training dan validasi:
 
-![Grafik Evaluasi](img/evaluasi1.png)
+![Grafik Evaluasi](images/evaluasi.png)
 
-![Grafik Evaluasi](img/evaluasi2.png)
 
 #### Insight dari Grafik Pelatihan
 
