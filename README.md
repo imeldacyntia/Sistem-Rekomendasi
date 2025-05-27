@@ -538,8 +538,8 @@ Keterangan:
 
 | Dataset  | RMSE   |
 | -------- | ------ |
-| Training | 0.1928 |
-| Testing  | 0.6132 |
+| Training | 0.316  |
+| Testing  | 0.678  |
 
 * Model menunjukkan fit yang sangat baik pada data pelatihan.
 * Namun, nilai RMSE pada data pengujian lebih tinggi, yang mengindikasikan bahwa model memiliki kecenderungan overfitting.
