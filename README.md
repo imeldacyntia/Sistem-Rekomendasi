@@ -474,7 +474,7 @@ Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi te
    * Jika data pada kolom kategori tidak konsisten (misalnya ada ejaan berbeda, penggunaan huruf kapital acak), maka kualitas rekomendasi akan menurun.
 
 
-#### **2. Collaborative Filtering **
+#### **2. Collaborative Filtering**
 
 ##### **Kelebihan:**
 
@@ -518,17 +518,89 @@ Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi te
 
 ## Evaluation
 
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
+Pada bagian ini, dilakukan evaluasi terhadap kinerja model rekomendasi berbasis Matrix Factorization dengan TensorFlow. Tujuan evaluasi adalah mengukur seberapa akurat model dalam memprediksi rating pengguna terhadap destinasi ekowisata.
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+### Evaluation Metric
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
+Metode evaluasi utama yang digunakan adalah Root Mean Squared Error (RMSE), yang mengukur deviasi rata-rata kuadrat antara prediksi dan nilai aktual. RMSE memberi penalti lebih besar pada kesalahan besar, sehingga efektif untuk mengevaluasi akurasi model prediksi.
 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+$$
+\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
+$$
 
-**---Ini adalah bagian akhir laporan---**
+Keterangan:
 
-_Catatan:_
+* $y_i$ = rating aktual dari pengguna
+* $\hat{y}_i$ = rating hasil prediksi
+* $n$ = jumlah sampel
 
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+### Hasil Evaluasi
+
+| Dataset  | RMSE   |
+| -------- | ------ |
+| Training | 0.1928 |
+| Testing  | 0.6132 |
+
+* Model menunjukkan fit yang sangat baik pada data pelatihan.
+* Namun, nilai RMSE pada data pengujian lebih tinggi, yang mengindikasikan bahwa model memiliki kecenderungan overfitting.
+  
+### 📈 Visualisasi Proses Training
+
+Berikut adalah grafik hasil pelatihan model berdasarkan metrik **Mean Squared Error (MSE)** dan **Mean Absolute Error (MAE)** untuk data training dan validasi:
+
+![Grafik Evaluasi](img/evaluasi1.png)
+
+![Grafik Evaluasi](img/evaluasi2.png)
+
+#### Insight dari Grafik Pelatihan
+
+1. Training MSE
+
+   * Nilai MSE pada data pelatihan mengalami penurunan secara konsisten seiring bertambahnya epoch.
+   * Ini menunjukkan bahwa model berhasil mempelajari pola dalam data dengan baik.
+
+2. Validation MSE
+
+   * Garis MSE validasi relatif stabil di sekitar 0.46 sepanjang proses pelatihan.
+   * Tidak adanya penurunan berarti pada MSE validasi menjadi indikasi awal bahwa model tidak mampu meningkatkan performa terhadap data yang belum dikenali.
+
+3. Training MAE
+
+   * MAE pada data training turun dari sekitar 0.52 menjadi 0.26, mengindikasikan bahwa model semakin akurat dalam memprediksi rating pada data yang sudah dilihat.
+
+4. Validation MAE
+
+   * Nilai MAE validasi tetap mendatar di angka sekitar 0.51, memperkuat indikasi overfitting karena akurasi model tidak membaik pada data validasi.
+
+### Evaluasi Terhadap Business Understanding
+
+#### Menjawab Problem Statements
+
+Model rekomendasi yang dikembangkan berhasil menjawab ketiga pernyataan masalah yang telah dirumuskan. Dengan mengombinasikan Content-Based Filtering dan Collaborative Filtering, sistem dapat menyarankan destinasi ekowisata yang relevan dengan minat pengguna, sekaligus membantu memperluas eksposur destinasi lokal Indonesia.
+
+* Masalah kurangnya informasi personalisasi diatasi dengan analisis fitur konten destinasi (kategori dan kota) serta preferensi kolektif pengguna (rating).
+* Kurangnya visibilitas destinasi lokal tertangani karena sistem tidak hanya merekomendasikan destinasi populer, tetapi juga mengangkat destinasi dengan karakteristik serupa yang belum banyak dikenal.
+* Penggunaan data lokal dalam pengembangan model memungkinkan sistem untuk memberikan rekomendasi yang kontekstual dan lebih relevan bagi wisatawan domestik maupun internasional.
+
+#### Mencapai Goals
+
+Model berhasil mencapai tujuan utama proyek, yaitu memberikan rekomendasi destinasi ekowisata yang dipersonalisasi dan berbasis data:
+
+* Content-Based Filtering menggunakan TF-IDF untuk menganalisis kesamaan antar destinasi berdasarkan deskripsi fitur (kategori dan kota), sehingga sistem dapat menyarankan destinasi yang mirip dengan preferensi sebelumnya.
+* Collaborative Filtering dengan model neural network (RecommenderNet) memanfaatkan data rating dari pengguna lain untuk menangkap pola perilaku kolektif dan menyarankan destinasi yang bahkan belum pernah dilihat oleh pengguna.
+
+#### Dampak dari Solution Approach
+
+Solusi yang dirancang memberikan dampak positif terhadap pengembangan sistem rekomendasi ekowisata:
+
+* Pendekatan Content-Based Filtering memperkuat relevansi rekomendasi dengan mempertimbangkan kesamaan karakteristik destinasi, memungkinkan wisatawan menemukan tempat-tempat yang sesuai dengan minat spesifik mereka.
+* Sementara itu, Collaborative Filtering meningkatkan personalisasi sistem dengan belajar dari perilaku pengguna lain, sehingga mampu menyarankan destinasi yang mungkin belum pernah ditemukan oleh pengguna namun memiliki kecenderungan disukai.
+* Evaluasi model menggunakan metrik RMSE menunjukkan bahwa sistem memiliki performa yang baik pada data training, meskipun perlu perbaikan lebih lanjut untuk mengurangi gap performa pada data testing (overfitting ringan).
+* Secara keseluruhan, solusi yang dibangun mampu meningkatkan visibilitas destinasi lokal, memperkuat aspek keberlanjutan pariwisata, dan mendorong pengalaman wisata yang lebih personal dan data-driven.
+
+## Kesimpulan
+Proyek ini berhasil mengembangkan sistem rekomendasi destinasi ekowisata di Indonesia dengan pendekatan Content-Based Filtering dan Collaborative Filtering. Tahapan dimulai dari pemahaman masalah (Business Understanding), eksplorasi data (Data Understanding), hingga pembuatan dan evaluasi model (Modeling & Evaluation).
+
+Content-Based Filtering menggunakan kemiripan fitur seperti kategori dan kota untuk merekomendasikan destinasi serupa, sementara Collaborative Filtering memanfaatkan data interaksi pengguna untuk memberikan rekomendasi yang lebih personal. Hasil evaluasi menunjukkan bahwa kedua pendekatan mampu menghasilkan rekomendasi yang relevan dan berkontribusi dalam meningkatkan visibilitas destinasi lokal serta mendukung pariwisata berkelanjutan di Indonesia.
+
+Sistem ini dapat menjadi langkah awal untuk membangun platform digital yang membantu wisatawan menemukan pengalaman berwisata yang sesuai dengan minat mereka, sekaligus mempromosikan potensi ekowisata nasional.
