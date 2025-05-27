@@ -544,7 +544,7 @@ Keterangan:
 * Model menunjukkan fit yang sangat baik pada data pelatihan.
 * Namun, nilai RMSE pada data pengujian lebih tinggi, yang mengindikasikan bahwa model memiliki kecenderungan overfitting.
   
-### 📈 Visualisasi Proses Training
+### Visualisasi Proses Training
 
 Berikut adalah grafik hasil pelatihan model berdasarkan metrik **Mean Squared Error (MSE)** dan **Mean Absolute Error (MAE)** untuk data training dan validasi:
 
