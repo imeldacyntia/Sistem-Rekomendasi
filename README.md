@@ -522,54 +522,50 @@ Pada bagian ini, dilakukan evaluasi terhadap kinerja model rekomendasi berbasis 
 
 ### Evaluation Metric
 
-Metode evaluasi utama yang digunakan adalah Root Mean Squared Error (RMSE), yang mengukur deviasi rata-rata kuadrat antara prediksi dan nilai aktual. RMSE memberi penalti lebih besar pada kesalahan besar, sehingga efektif untuk mengevaluasi akurasi model prediksi.
+Metode evaluasi utama yang digunakan adalah Root Mean Squared Error (RMSE), yang mengukur deviasi rata-rata kuadrat antara prediksi dan nilai aktual. RMSE memberikan penalti lebih besar terhadap kesalahan besar, sehingga efektif untuk mengevaluasi akurasi model prediksi.
 
 $$
 \text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
 $$
 
 Keterangan:
-
-* $y_i$ = rating aktual dari pengguna
-* $\hat{y}_i$ = rating hasil prediksi
-* $n$ = jumlah sampel
+- $y_i$ = rating aktual dari pengguna
+- $\hat{y}_i$ = rating hasil prediksi
+- $n$ = jumlah sampel
 
 ### Hasil Evaluasi
 
-| Dataset  | RMSE   |
-| -------- | ------ |
-| Training | 0.316  |
-| Testing  | 0.678  |
+| Dataset  | MSE    | RMSE  | MAE   |
+|----------|--------|-------|-------|
+| Training | 0.0980 | 0.313 | 0.244 |
+| Testing  | 0.3649 | 0.604 | 0.511 |
 
-* Model menunjukkan fit yang sangat baik pada data pelatihan.
-* Namun, nilai RMSE pada data pengujian lebih tinggi, yang mengindikasikan bahwa model memiliki kecenderungan overfitting.
+* Nilai RMSE pada data training menunjukkan performa prediksi yang baik.
+* Sementara itu, nilai RMSE yang lebih tinggi pada data testing (validasi) mengindikasikan kemungkinan overfitting ringan, di mana model belajar terlalu baik pada data pelatihan dan kurang mampu menggeneralisasi pada data baru.
   
 ### Visualisasi Proses Training
 
-Berikut adalah grafik hasil pelatihan model berdasarkan metrik **Mean Squared Error (MSE)** dan **Mean Absolute Error (MAE)** untuk data training dan validasi:
+Berikut adalah grafik hasil pelatihan model berdasarkan metrik Mean Squared Error (MSE) dan Mean Absolute Error (MAE) pada data pelatihan dan validasi:
 
 ![Grafik Evaluasi](images/evaluasi.png)
 
-
 #### Insight dari Grafik Pelatihan
 
-1. Training MSE
+1. **Training MSE**
+   - Nilai MSE pada data pelatihan menurun secara konsisten dari sekitar 0.36 ke 0.10 selama proses pelatihan.
+   - Ini menunjukkan bahwa model berhasil mempelajari pola pada data training dengan baik.
 
-   * Nilai MSE pada data pelatihan mengalami penurunan secara konsisten seiring bertambahnya epoch.
-   * Ini menunjukkan bahwa model berhasil mempelajari pola dalam data dengan baik.
+2. **Validation MSE**
+   - Garis MSE validasi relatif datar di sekitar 0.36 dan tidak menunjukkan penurunan berarti.
+   - Ini bisa menjadi indikasi awal bahwa model tidak mengalami peningkatan performa terhadap data yang tidak dilihat sebelumnya (validasi).
 
-2. Validation MSE
+3. **Training MAE**
+   - MAE pada data pelatihan menurun dari sekitar 0.52 menjadi 0.26, yang menunjukkan peningkatan akurasi prediksi pada data training.
 
-   * Garis MSE validasi relatif stabil di sekitar 0.46 sepanjang proses pelatihan.
-   * Tidak adanya penurunan berarti pada MSE validasi menjadi indikasi awal bahwa model tidak mampu meningkatkan performa terhadap data yang belum dikenali.
+4. **Validation MAE**
+   - Nilai MAE validasi tetap berada di kisaran 0.51 sepanjang proses pelatihan.
+   - Hal ini memperkuat indikasi overfitting, di mana model terlalu fokus pada data pelatihan dan kurang mampu mengeneralisasi ke data baru.
 
-3. Training MAE
-
-   * MAE pada data training turun dari sekitar 0.52 menjadi 0.26, mengindikasikan bahwa model semakin akurat dalam memprediksi rating pada data yang sudah dilihat.
-
-4. Validation MAE
-
-   * Nilai MAE validasi tetap mendatar di angka sekitar 0.51, memperkuat indikasi overfitting karena akurasi model tidak membaik pada data validasi.
 
 ### Evaluasi Terhadap Business Understanding
 
