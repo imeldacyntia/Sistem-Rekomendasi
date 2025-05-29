@@ -144,27 +144,27 @@ Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destina
 Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
 
-## Data Preparation
+## **Data Preparation**
 
-### Teknik Data Preparation
+### **Teknik Data Preparation Umum**
 
 * Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
 * Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
 * Handling Missing Values:
 
-  * Menghapus nilai kosong (NaN) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`.
+  * Menghapus nilai kosong (`NaN`) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`.
   * Menghapus baris yang memiliki nilai kosong pada kolom gambar `gallery_photo_img2` dan `gallery_photo_img3`, karena gambar digunakan dalam fitur deskriptif tempat wisata.
   * Mengganti nilai `'-'` dan nilai kosong di kolom `price` dengan `0`.
-* Membersihkan format penulisan: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik.
-* Menghapus kolom yang tidak relevan untuk sistem rekomendasi, seperti gambar dan peta.
-* Mengonversi beberapa kolom menjadi list.
+* Membersihkan Format Penulisan: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik (`float`).
+* Menghapus Kolom Tidak Relevan: Kolom seperti gambar (`place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`) dan peta (`place_map`, `description_location`) dihapus karena tidak digunakan dalam model rekomendasi.
+* Mengonversi Kolom ke List: Kolom `place_id`, `place_name`, `user_id`, dan `user_rating` dikonversi menjadi list untuk mempermudah pemrosesan lebih lanjut.
 
-### Proses Data Preparation
+### **Proses Data Preparation Umum**
 
 1. Menggabungkan `df_rating` dan `df_place` menggunakan `pd.merge()` berdasarkan `place_id`.
 2. Menghapus baris duplikat berdasarkan `place_id` menggunakan `drop_duplicates()`.
 3. Menghapus baris dengan nilai kosong pada kolom penting (`user_id`, `place_id`, `user_rating`) dan kolom gambar (`gallery_photo_img2`, `gallery_photo_img3`).
-4. Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan `0`, lalu membersihkan karakter non-numerik dan mengonversinya ke tipe `float`.
+4. Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan `0`, membersihkan karakter non-numerik, dan mengonversinya ke tipe `float`.
 5. Menghapus kolom yang tidak digunakan dalam model rekomendasi seperti:
 
    * `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`
@@ -172,55 +172,54 @@ Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup
 6. Memastikan semua kolom bebas dari nilai kosong dan siap digunakan dalam tahap selanjutnya.
 7. Mengonversi kolom `place_id`, `place_name`, `user_id`, dan `user_rating` menjadi list.
 
-### Alasan Tahapan Data Preparation
+### **Tahapan Data Preparation untuk Content-Based Filtering (CBF)**
+
+* Melakukan ekstraksi fitur teks pada kolom `category` menggunakan `TfidfVectorizer` dengan parameter:
+
+  * `ngram_range = (1, 2)`
+  * `stop_words = 'english'`
+  * `max_features = 5000`
+* Tujuan: Mengubah data teks kategori wisata menjadi representasi numerik (vektor TF-IDF) yang bisa dihitung kemiripannya untuk rekomendasi berbasis konten.
+
+### **Tahapan Data Preparation untuk Collaborative Filtering (CF)**
+
+* Melakukan Label Encoding pada kolom `user_id` dan `place_id` menggunakan `LabelEncoder` untuk mengubah data kategorikal menjadi bentuk numerik.
+* Melakukan normalisasi nilai rating (`user_rating`) ke rentang 0–1 menggunakan `MinMaxScaler` agar skala rating seragam dan memudahkan proses pelatihan model.
+* Membagi dataset menjadi subset training dan validasi (`x_train`, `y_train`, `x_valid`, `y_valid`) untuk keperluan pelatihan dan evaluasi model.
+* Tujuan utama tahapan ini adalah agar ID pengguna dan tempat wisata bisa diproses secara efisien dalam model pembelajaran mesin, khususnya untuk embedding layer pada neural network, serta memastikan data rating memiliki skala yang tepat untuk optimasi model.
+
+### **Alasan Tahapan Data Preparation**
 
 * Removing Duplicates: Untuk menghindari bias akibat data tempat wisata yang muncul lebih dari satu kali.
 * Handling Missing Values:
 
-  * Menghindari kesalahan proses pemodelan akibat nilai kosong.
-  * Gambar galeri dianggap penting sebagai bagian dari fitur deskriptif konten wisata.
-  * Kolom `price` perlu bernilai numerik agar dapat dianalisis dan digunakan dalam sistem rekomendasi.
-* Membersihkan format penulisan: Supaya nilai dalam `price` dikenali sebagai angka, bukan string.
-* Mereplace value dan drop kolom tidak relevan: Untuk menyederhanakan data hanya pada fitur yang relevan dan signifikan bagi sistem rekomendasi berbasis konten maupun kolaboratif.
-
+  * Mencegah kesalahan pada proses pemodelan akibat nilai kosong.
+  * Gambar galeri dianggap penting sebagai bagian dari konten visual tempat wisata.
+  * Kolom `price` perlu bernilai numerik agar dapat dianalisis dalam pemodelan.
+* Membersihkan Format Penulisan: Agar nilai dalam kolom `price` dikenali sebagai angka, bukan string, sehingga bisa digunakan dalam pemodelan.
+* Menghapus Kolom Tidak Relevan:
+  Menyederhanakan data hanya pada fitur yang relevan dengan sistem rekomendasi agar efisien dan mengurangi noise.
+* TF-IDF Vectorizer (CBF):
+  Teknik penting untuk mengubah teks kategori wisata menjadi vektor numerik yang bisa dihitung kemiripannya menggunakan Cosine Similarity. Ini menjadi dasar sistem rekomendasi berbasis konten.
+* Label Encoding (CF):
+  Dibutuhkan untuk mengubah data kategorikal (`user_id`, `place_id`) menjadi bentuk numerik agar bisa digunakan dalam model pembelajaran mesin, khususnya embedding pada neural network.
 
 ## Modeling
 
 Pada tahap ini, sistem rekomendasi destinasi wisata di Indonesia dikembangkan menggunakan dua pendekatan utama: Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan memiliki karakteristik, parameter, kelebihan, dan kekurangan tersendiri dalam menghasilkan rekomendasi. Selain itu, ditampilkan juga hasil top-N recommendation untuk memberikan gambaran konkret dari output sistem.
 
 ### 1. Model Sistem Rekomendasi Content-Based Filtering
-Content-Based Filtering bekerja dengan menganalisis atribut atau fitur deskriptif dari masing-masing destinasi wisata dan memberikan rekomendasi berdasarkan kemiripan konten antar destinasi. Dalam proyek ini, model dibangun dengan mengandalkan informasi dari kolom category yang merepresentasikan jenis wisata dari setiap destinasi.
+Content-Based Filtering menghasilkan rekomendasi dengan menghitung kemiripan antar destinasi berdasarkan fitur konten, dalam hal ini adalah kategori wisata. Data yang telah direpresentasikan dalam bentuk vektor (menggunakan TF-IDF Vectorizer pada tahap Data Preparation) digunakan untuk menghitung kemiripan antar destinasi menggunakan cosine similarity.
 
 #### Parameter yang Digunakan:
 
-* Fitur teks: Kolom category dari setiap destinasi.
-* TF-IDF Vectorizer: Mengubah data kategori menjadi representasi numerik berbasis teks.
-
-  * `ngram_range=(1, 2)`
-  * `stop_words='english'`
-  * `max_features=5000`
-* Cosine Similarity: Untuk menghitung kemiripan antar destinasi berdasarkan nilai TF-IDF.
-
+* Input vektor: Matriks TF-IDF hasil dari tahap Data Preparation.
+* Similarity metric: Cosine Similarity yang digunakan untuk mengukur kemiripan antar destinasi berdasarkan vektor fitur.
+* Top-N: Jumlah rekomendasi teratas yang ditampilkan kepada pengguna.
+  
 #### Tahapan Proses:
 
-**a. Preprocessing kategori:**
-
-Melakukan konversi teks ke huruf kecil dan menghapus karakter non-huruf.
-
-```python
-content_features_df['category'] = content_features_df['category'].str.lower()
-```
-
-**b. Ekstraksi fitur dengan TF-IDF:**
-
-Membangun representasi numerik dari teks kategori menggunakan TF-IDF Vectorizer.
-
-```python
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(content_features_df['category'])
-```
-
-**c. Perhitungan Similarity:**
+**a. Perhitungan Similarity:**
 
 Menghitung kemiripan antar destinasi wisata dengan cosine similarity.
 
@@ -228,7 +227,7 @@ Menghitung kemiripan antar destinasi wisata dengan cosine similarity.
 similarity_matrix = cosine_similarity(tfidf_matrix)
 ```
 
-**d. Rekomendasi berdasarkan input kategori dan kota:**
+**b. Rekomendasi berdasarkan input kategori dan kota:**
 
 Mengambil Top-N destinasi paling mirip berdasarkan kategori dan kota pilihan pengguna.
 
@@ -328,34 +327,22 @@ Collaborative Filtering memanfaatkan interaksi pengguna (user) dan item (place\_
 
 #### Tahapan Proses:
 
-**a. Menggunakan Data Interaksi**
+**a. Membuat Class Model (Matrix Factorization Recommender)**
 
-   * Dataset: `ratings.csv` dan `cleaned_data.csv`
-   * Data berisi kolom `user_id`, `place_id`, dan `rating`.
+Model terdiri dari dua layer embedding:
 
-**b. Encoding dan Preprocessing**
+* user_embedding untuk representasi laten pengguna
 
-   * `user_id` dan `place_id` diencode menjadi angka dengan `LabelEncoder`.
-   * Rating dinormalisasi ke skala 0–1 menggunakan MinMaxScaler.
-   * Dataset dibagi menjadi:
+* place_embedding untuk representasi laten destinasi wisata
 
-     * `x_train`, `y_train` untuk training
-     * `x_valid`, `y_valid` untuk validasi
-
-**c. Membuat Class Model (Matrix Factorization Recommender)**
+Hasil embedding dikombinasikan dengan operasi dot product, lalu diproses melalui fungsi aktivasi sigmoid untuk memprediksi skor rating.
 
 ```python
 class MatrixFactorizationRecommender(tf.keras.Model):
     ...
 ```
 
-Model ini terdiri dari dua layer embedding:
-
-   * `user_embedding` untuk user
-   * `place_embedding` untuk tempat wisata
-  Lalu dilakukan *dot product* dan aktivasi sigmoid untuk memprediksi skor rating.
-
-**d. Inisialisasi dan Kompilasi Model**
+**b. Inisialisasi dan Kompilasi Model**
 
 ```python
 rekomendasi_model = MatrixFactorizationRecommender(
@@ -370,7 +357,7 @@ rekomendasi_model.compile(
 )
 ```
 
-**e. Training Model**
+**c. Training Model**
 
 ```python
 training_log = rekomendasi_model.train(
@@ -385,13 +372,13 @@ Selama training, performa model divisualisasikan menggunakan grafik MSE dan MAE 
 
 #### Interaksi Pengguna 
 
-Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi pada seorang pengguna dari dataset `ratings.csv`.
+Model menguji prediksi rating untuk destinasi yang belum pernah dikunjungi pengguna sehingga dapat memberikan rekomendasi yang bersifat personal dan relevan.
 
 #### Top-N Recommendation Collaborative Filtering
 
-Model Collaborative Filtering menghasilkan rekomendasi dengan menganalisis pola interaksi pengguna terhadap destinasi wisata yang telah mereka beri rating. Berdasarkan model Matrix Factorization, sistem memprediksi skor rating terhadap destinasi yang belum pernah dikunjungi atau diberi rating oleh pengguna.
+Model Collaborative Filtering memberikan rekomendasi dengan menganalisis pola interaksi pengguna terhadap destinasi wisata yang sudah mereka beri rating. Dengan menggunakan Matrix Factorization, model memprediksi skor rating untuk destinasi yang belum pernah dikunjungi atau dinilai oleh pengguna tersebut.
 
-Rekomendasi disusun berdasarkan prediksi skor tertinggi dari model, sehingga destinasi dengan kemungkinan besar disukai pengguna akan berada di peringkat atas. Model ini sangat efektif untuk memberikan rekomendasi personalized karena mempertimbangkan kesamaan preferensi antar pengguna yang tidak selalu terlihat dari konten destinasi itu sendiri.
+Rekomendasi kemudian disusun berdasarkan skor prediksi tertinggi, sehingga destinasi yang paling mungkin disukai oleh pengguna akan muncul di peringkat atas. Pendekatan ini sangat efektif untuk menghasilkan rekomendasi yang bersifat personal karena mempertimbangkan kesamaan preferensi antar pengguna, yang tidak selalu dapat diidentifikasi hanya dari karakteristik konten destinasi wisata.
 
 #### Cara Kerja Algoritma:
 
