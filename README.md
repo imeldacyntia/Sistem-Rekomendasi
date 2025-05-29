@@ -560,12 +560,11 @@ Berikut adalah grafik hasil pelatihan model berdasarkan metrik Mean Squared Erro
    - Ini bisa menjadi indikasi awal bahwa model tidak mengalami peningkatan performa terhadap data yang tidak dilihat sebelumnya (validasi).
 
 3. **Training MAE**
-   - MAE pada data pelatihan menurun dari sekitar 0.52 menjadi 0.26, yang menunjukkan peningkatan akurasi prediksi pada data training.
+   - MAE pada data pelatihan menurun dari sekitar 0.51 menjadi 0.24, yang menunjukkan peningkatan akurasi prediksi pada data training.
 
 4. **Validation MAE**
    - Nilai MAE validasi tetap berada di kisaran 0.51 sepanjang proses pelatihan.
    - Hal ini memperkuat indikasi overfitting, di mana model terlalu fokus pada data pelatihan dan kurang mampu mengeneralisasi ke data baru.
-
 
 ### Evaluasi Terhadap Business Understanding
 
