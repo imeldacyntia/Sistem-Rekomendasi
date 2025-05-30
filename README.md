@@ -143,67 +143,86 @@ Visualisasi ini menunjukkan rata-rata nilai rating dari pengguna pada 10 destina
 
 Distribusi nilai rating yang diberikan oleh pengguna menunjukkan pola yang cukup menarik. Dari visualisasi, tampak bahwa rating 4 merupakan yang paling dominan, diikuti oleh rating 5 dan 3. Hal ini mencerminkan bahwa sebagian besar pengguna merasa puas hingga sangat puas terhadap destinasi wisata yang mereka kunjungi. Sementara itu, rating 2 hanya muncul dalam jumlah kecil, dan rating 1 tidak ditemukan sama sekali dalam dataset. Pola ini dapat diinterpretasikan bahwa kualitas destinasi ekowisata dalam dataset cenderung positif, atau bisa juga mengindikasikan adanya bias pengguna yang lebih memilih memberikan penilaian sedang hingga tinggi. 
 
-
 ## **Data Preparation**
 
-### **Teknik Data Preparation Umum**
+### **1. Teknik Data Preparation Umum**
 
-* Menggabungkan dataset rating dan data tempat wisata menggunakan `place_id`.
-* Removing Duplicates: Menghapus data duplikat berdasarkan `place_id`.
-* Handling Missing Values:
+Beberapa teknik umum dilakukan pada tahap ini untuk memastikan data siap digunakan dalam proses pemodelan sistem rekomendasi:
 
-  * Menghapus nilai kosong (`NaN`) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`.
-  * Menghapus baris yang memiliki nilai kosong pada kolom gambar `gallery_photo_img2` dan `gallery_photo_img3`, karena gambar digunakan dalam fitur deskriptif tempat wisata.
-  * Mengganti nilai `'-'` dan nilai kosong di kolom `price` dengan `0`.
-* Membersihkan Format Penulisan: Menghapus simbol non-numerik pada kolom `price` agar bisa dikonversi ke tipe numerik (`float`).
-* Menghapus Kolom Tidak Relevan: Kolom seperti gambar (`place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`) dan peta (`place_map`, `description_location`) dihapus karena tidak digunakan dalam model rekomendasi.
-* Mengonversi Kolom ke List: Kolom `place_id`, `place_name`, `user_id`, dan `user_rating` dikonversi menjadi list untuk mempermudah pemrosesan lebih lanjut.
+* **Menggabungkan Dataset:** Dataset `df_rating` (interaksi pengguna) dan `df_place` (informasi tempat wisata) digabung menggunakan `place_id` sebagai kunci utama dengan `pd.merge()`, untuk membentuk data lengkap yang dapat dianalisis lebih lanjut.
 
-### **Proses Data Preparation Umum**
+* **Removing Duplicates:** Menghapus baris duplikat berdasarkan `place_id` agar setiap tempat wisata hanya muncul satu kali dalam data. Hal ini penting untuk mencegah bias dan redundansi dalam pemodelan.
 
-1. Menggabungkan `df_rating` dan `df_place` menggunakan `pd.merge()` berdasarkan `place_id`.
-2. Menghapus baris duplikat berdasarkan `place_id` menggunakan `drop_duplicates()`.
-3. Menghapus baris dengan nilai kosong pada kolom penting (`user_id`, `place_id`, `user_rating`) dan kolom gambar (`gallery_photo_img2`, `gallery_photo_img3`).
-4. Mengganti tanda `'-'` dan nilai kosong di kolom `price` dengan `0`, membersihkan karakter non-numerik, dan mengonversinya ke tipe `float`.
-5. Menghapus kolom yang tidak digunakan dalam model rekomendasi seperti:
+* **Handling Missing Values:**
 
-   * `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3`
-   * `place_map`, dan `description_location`.
-6. Memastikan semua kolom bebas dari nilai kosong dan siap digunakan dalam tahap selanjutnya.
-7. Mengonversi kolom `place_id`, `place_name`, `user_id`, dan `user_rating` menjadi list.
+  * Menghapus baris dengan nilai kosong (`NaN`) pada kolom penting seperti `user_id`, `place_id`, dan `user_rating`, karena nilai tersebut bersifat wajib dalam proses pelatihan model.
+  * Menghapus baris yang memiliki nilai kosong pada kolom `gallery_photo_img2` dan `gallery_photo_img3`. Kolom ini dianggap penting karena gambar digunakan sebagai fitur visual dalam sistem rekomendasi berbasis konten (CBF).
 
-### **Tahapan Data Preparation untuk Content-Based Filtering (CBF)**
+* **Pembersihan Format Penulisan Kolom Harga:**
 
-* Melakukan ekstraksi fitur teks pada kolom `category` menggunakan `TfidfVectorizer` dengan parameter:
+  * Mengganti nilai `'-'` atau kosong pada kolom `price` dengan nilai `0`.
+  * Menghapus simbol non-numerik seperti `Rp`, titik, dan koma agar dapat dikonversi ke tipe numerik (`float`) untuk keperluan analisis dan pemodelan.
 
-  * `ngram_range = (1, 2)`
-  * `stop_words = 'english'`
-  * `max_features = 5000`
-* Tujuan: Mengubah data teks kategori wisata menjadi representasi numerik (vektor TF-IDF) yang bisa dihitung kemiripannya untuk rekomendasi berbasis konten.
+* **Menghapus Kolom Tidak Relevan:** Kolom-kolom yang tidak diperlukan dalam proses pemodelan dihapus, seperti:
 
-### **Tahapan Data Preparation untuk Collaborative Filtering (CF)**
+  * `place_img`, `gallery_photo_img1`, `gallery_photo_img2`, `gallery_photo_img3` (karena data visual tidak digunakan dalam versi awal model),
+  * `place_map`, dan `description_location` (karena tidak relevan terhadap fitur pemodelan saat ini).
 
-* Melakukan Label Encoding pada kolom `user_id` dan `place_id` menggunakan `LabelEncoder` untuk mengubah data kategorikal menjadi bentuk numerik.
-* Melakukan normalisasi nilai rating (`user_rating`) ke rentang 0–1 menggunakan `MinMaxScaler` agar skala rating seragam dan memudahkan proses pelatihan model.
-* Membagi dataset menjadi subset training dan validasi (`x_train`, `y_train`, `x_valid`, `y_valid`) untuk keperluan pelatihan dan evaluasi model.
-* Tujuan utama tahapan ini adalah agar ID pengguna dan tempat wisata bisa diproses secara efisien dalam model pembelajaran mesin, khususnya untuk embedding layer pada neural network, serta memastikan data rating memiliki skala yang tepat untuk optimasi model.
+* **Mengonversi Kolom menjadi List:** Nilai dari kolom `place_id`, `place_name`, `user_id`, dan `user_rating` diubah ke dalam list menggunakan `.tolist()` untuk mempermudah proses input ke model atau eksplorasi data.
 
-### **Alasan Tahapan Data Preparation**
+### **2. Tahapan Data Preparation untuk Content-Based Filtering (CBF)**
 
-* Removing Duplicates: Untuk menghindari bias akibat data tempat wisata yang muncul lebih dari satu kali.
-* Handling Missing Values:
+* Data tempat wisata yang sudah dibersihkan disalin ke dalam variabel `content_features_df` untuk fokus pada fitur-fitur yang akan digunakan dalam model berbasis konten.
 
-  * Mencegah kesalahan pada proses pemodelan akibat nilai kosong.
-  * Gambar galeri dianggap penting sebagai bagian dari konten visual tempat wisata.
-  * Kolom `price` perlu bernilai numerik agar dapat dianalisis dalam pemodelan.
-* Membersihkan Format Penulisan: Agar nilai dalam kolom `price` dikenali sebagai angka, bukan string, sehingga bisa digunakan dalam pemodelan.
-* Menghapus Kolom Tidak Relevan:
-  Menyederhanakan data hanya pada fitur yang relevan dengan sistem rekomendasi agar efisien dan mengurangi noise.
-* TF-IDF Vectorizer (CBF):
-  Teknik penting untuk mengubah teks kategori wisata menjadi vektor numerik yang bisa dihitung kemiripannya menggunakan Cosine Similarity. Ini menjadi dasar sistem rekomendasi berbasis konten.
-* Label Encoding (CF):
-  Dibutuhkan untuk mengubah data kategorikal (`user_id`, `place_id`) menjadi bentuk numerik agar bisa digunakan dalam model pembelajaran mesin, khususnya embedding pada neural network.
+* Melakukan ekstraksi fitur teks pada kolom category menggunakan TfidfVectorizer dengan parameter default, tanpa spesifikasi tambahan. 
 
+* Hasil ekstraksi berupa matriks TF-IDF berdimensi `(jumlah data, jumlah fitur)` yang merepresentasikan pentingnya setiap kata dalam setiap kategori tempat wisata.
+
+* Matriks TF-IDF ini dikonversi ke DataFrame untuk kemudahan analisis, pemrosesan lanjut, dan visualisasi kemiripan antar tempat wisata menggunakan **cosine similarity**.
+
+### **3. Tahapan Data Preparation untuk Collaborative Filtering (CF)**
+
+* Dataset interaksi pengguna disimpan dalam variabel `ratings_df`, yang terdiri dari 849 baris data `user_id`, `place_id`, dan `user_rating`.
+
+* Kolom `user_id` dan `place_id` dikodekan secara numerik menggunakan Label Encoding melalui `LabelEncoder` agar kompatibel dengan model pembelajaran mesin, terutama model berbasis embedding.
+
+* Nilai `user_rating` dinormalisasi menggunakan Min-Max Normalization ke rentang 0–1, untuk mempercepat dan menstabilkan proses pelatihan model.
+
+* Dataset dibagi menjadi dua subset:
+
+  * 80% data untuk pelatihan (`x_train`, `y_train`),
+  * 20% data untuk validasi (`x_valid`, `y_valid`), untuk evaluasi model terhadap data yang tidak dilihat saat pelatihan.
+
+
+### **4. Alasan Setiap Tahapan Data Preparation**
+
+* **Menghapus Duplikasi:**
+  Untuk memastikan bahwa data tempat wisata bersifat unik dan tidak memberikan bobot ganda dalam proses pelatihan model.
+
+* **Menangani Nilai Kosong:**
+
+  * Untuk mencegah error saat pelatihan model.
+  * Kolom `gallery_photo_img2` dan `gallery_photo_img3` dianggap penting karena gambar menjadi fitur visual yang dapat memperkaya deskripsi tempat wisata dalam CBF.
+  * Kolom `price` harus memiliki nilai numerik agar bisa dipertimbangkan dalam fitur kuantitatif, seperti penilaian berbasis harga.
+
+* **Pembersihan Format Penulisan:**
+  Mengubah nilai kolom `price` dari format string (dengan simbol dan karakter non-angka) ke dalam format numerik (`float`) agar bisa diproses dalam model.
+
+* **Menghapus Kolom Tidak Relevan:**
+  Untuk menyederhanakan model, mempercepat pelatihan, dan mengurangi noise dari data yang tidak digunakan.
+
+* **TF-IDF Vectorizer (untuk CBF):**
+  Mengubah teks kategori tempat wisata menjadi representasi numerik yang memungkinkan penghitungan kemiripan antar tempat menggunakan **cosine similarity**, yang menjadi dasar dari sistem rekomendasi berbasis konten.
+
+* **Label Encoding (untuk CF):**
+  Digunakan agar `user_id` dan `place_id` bisa dimasukkan ke dalam model machine learning. Proses ini diperlukan agar data kategorikal bisa diproses oleh model berbasis embedding atau matrix factorization.
+
+* **Normalisasi Rating:**
+  Rating dinormalisasi agar nilai berada dalam rentang 0–1. Ini membantu meningkatkan efisiensi dan kestabilan selama proses training model.
+
+* **Split Data Training dan Validasi:**
+  Pemisahan data diperlukan untuk mengevaluasi performa model pada unseen data, serta mencegah overfitting.
+  
 ## Modeling
 
 Pada tahap ini, sistem rekomendasi destinasi wisata di Indonesia dikembangkan menggunakan dua pendekatan utama: Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan memiliki karakteristik, parameter, kelebihan, dan kekurangan tersendiri dalam menghasilkan rekomendasi. Selain itu, ditampilkan juga hasil top-N recommendation untuk memberikan gambaran konkret dari output sistem.
@@ -229,31 +248,41 @@ similarity_matrix = cosine_similarity(tfidf_matrix)
 
 **b. Fungsi Rekomendasi Berdasarkan Kategori dan Kota:**
 
-Mengambil Top-N destinasi paling mirip berdasarkan kategori dan kota pilihan pengguna.
+Method recommend_by_category_city pada kelas DestinationRecommender berfungsi untuk mengambil Top-N destinasi wisata berdasarkan kategori dan (opsional) kota yang dipilih. Langkah utamanya adalah memfilter data sesuai kriteria, menghitung skor kemiripan menggunakan matriks similarity, lalu mengurutkan dan mengembalikan hasil rekomendasi.
 
 ```python
-def recommend_by_category_city(selected_category, selected_city=None, top_n=5, same_city_only=False):
-    # Filter data berdasarkan kategori dan kota
-    # Hitung skor kemiripan dan urutkan Top-N
+def recommend_by_category_city(self, selected_category, selected_city=None, top_n=5, same_city_only=False):
+    filtered = self.place_content_df[
+        self.place_content_df['category'].str.contains(selected_category, case=False, na=False)
+    ]
+    if selected_city and same_city_only:
+        filtered = filtered[filtered['city'].str.lower() == selected_city.lower()]
+    # Hitung skor kemiripan dan pilih Top-N
+    # ...
     return rekomendasi_df
 
 ```
-**c. Contoh Penggunaan Sistem Rekomendasi:**
+**c. Fungsi Pembungkus dan Contoh Penggunaan Sistem Rekomendasi:**
 
-Pengguna memasukkan kategori dan kota tujuan (opsional), kemudian sistem menampilkan rekomendasi destinasi wisata yang relevan.
+Fungsi get_recommendations memanggil method rekomendasi tersebut dan menampilkan hasilnya dengan format tabel yang rapi, sekaligus menangani error jika tidak ada hasil.
 
 ```python
-get_recommendations(
-    selected_category='budaya', 
-    selected_city='Bandung', 
-    same_city_only=True, 
-    top_n=5
-)
+def get_recommendations(selected_category, selected_city=None, same_city_only=False, top_n=5):
+    try:
+        rekomendasi = recommender.recommend_by_category_city(
+            selected_category, selected_city, top_n, same_city_only
+        )
+        # Tampilkan tabel hasil rekomendasi
+    except ValueError as e:
+        print(e)
 
-get_recommendations(
-    selected_category='budaya', 
-    top_n=5
-)
+```
+
+Contoh pemanggilan fungsi untuk pengguna:
+
+```python
+get_recommendations('budaya', 'Bandung', same_city_only=True, top_n=5)
+get_recommendations('budaya', top_n=5)
 
 ```
 
