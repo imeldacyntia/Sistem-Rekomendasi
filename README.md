@@ -227,22 +227,39 @@ Menghitung kemiripan antar destinasi wisata dengan cosine similarity.
 similarity_matrix = cosine_similarity(tfidf_matrix)
 ```
 
-**b. Rekomendasi berdasarkan input kategori dan kota:**
+**b. Fungsi Rekomendasi Berdasarkan Kategori dan Kota:**
 
 Mengambil Top-N destinasi paling mirip berdasarkan kategori dan kota pilihan pengguna.
 
 ```python
-rekomendasi = recommender.recommend_by_category_city(
-    selected_category='budaya',
-    selected_city='Yogyakarta',
-    top_n=5,
-    same_city_only=True
+def recommend_by_category_city(selected_category, selected_city=None, top_n=5, same_city_only=False):
+    # Filter data berdasarkan kategori dan kota
+    # Hitung skor kemiripan dan urutkan Top-N
+    return rekomendasi_df
+
+```
+**c. Contoh Penggunaan Sistem Rekomendasi:**
+
+Pengguna memasukkan kategori dan kota tujuan (opsional), kemudian sistem menampilkan rekomendasi destinasi wisata yang relevan.
+
+```python
+get_recommendations(
+    selected_category='budaya', 
+    selected_city='Bandung', 
+    same_city_only=True, 
+    top_n=5
 )
+
+get_recommendations(
+    selected_category='budaya', 
+    top_n=5
+)
+
 ```
 
 #### Interaksi Pengguna:
 
-Pengguna cukup memilih atau memasukkan satu destinasi yang disukai. Sistem akan mencari dan merekomendasikan destinasi-destinasi lain yang memiliki kategori serupa, berdasarkan nilai kemiripan (cosine similarity) tertinggi.
+Pengguna memasukkan kategori wisata (misalnya: budaya) dan dapat memilih nama kota untuk memfilter rekomendasi. Sistem akan menampilkan destinasi wisata yang paling mirip dengan preferensi pengguna berdasarkan nilai kemiripan cosine similarity.
 
 #### Top-N Recommendation Content Based Filtering
 
@@ -253,6 +270,8 @@ Model menghasilkan daftar Top-N destinasi wisata yang paling mirip dengan input 
 * Pengguna memasukkan kategori wisata (misalnya: budaya, cagar alam).
 
 * (Opsional) Pengguna dapat memasukkan nama kota untuk memfilter hasil rekomendasi.
+  
+* Sistem memfilter destinasi berdasarkan kategori dan kota (jika ada).
 
 * Sistem menghitung kemiripan antar destinasi berdasarkan vektor TF-IDF dari kategori, menggunakan cosine similarity.
 
@@ -260,16 +279,17 @@ Model menghasilkan daftar Top-N destinasi wisata yang paling mirip dengan input 
   
 ##### Contoh Interaksi dan Output:
 
-**Input Pengguna**:
+**Contoh 1:**
+Input:
 
-Masukkan kategori wisata (contoh: budaya, cagar alam): budaya
+* Kategori = budaya
+* Kota = Bandung
+* Hanya dari kota yang sama = Ya
+* Top-N = 5
 
-Masukkan nama kota (opsional, tekan Enter jika ingin semua kota): bandung
+Output:
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
-
-**Rekomendasi Destinasi Wisata**:
-| No | place\_name                  | category           | city    |
+| No | Nama Destinasi               | Kategori           | Kota    |
 | -- | ---------------------------- | ------------------ | ------- |
 | 1  | Stone Garden Citatah         | Budaya, Cagar Alam | Bandung |
 | 2  | Taman Wisata Alam Cikole     | Budaya, Cagar Alam | Bandung |
@@ -277,41 +297,29 @@ Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
 | 4  | Gua Pawon                    | Budaya, Cagar Alam | Bandung |
 | 5  | Taman Wisata Alam Ranca Upas | Budaya, Cagar Alam | Bandung |
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
+Penjelasan:
+Sistem berhasil memfilter destinasi berdasarkan kategori dan membatasi hasil hanya dari kota yang diminta. Namun, perlu diperhatikan bahwa kategori tempat wisata mengandung lebih dari satu kategori sekaligus (misalnya: "Budaya,Cagar Alam"). Ini berarti rekomendasi masih memasukkan destinasi dengan kategori ganda asalkan salah satu kategorinya mengandung kata kunci kategori yang dimasukkan pengguna (dalam contoh ini adalah "budaya"). Dengan demikian, meskipun input kategori hanya "budaya", destinasi dengan kategori campuran seperti "Budaya,Cagar Alam" tetap masuk dalam hasil rekomendasi.
 
-Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
+**Contoh 2:**
+Input:
 
-Masukkan nama kota (opsional, tekan Enter jika ingin semua kota): yogyakarta
+* Kategori = budaya
+* Kota = (tidak diisi)
+* Hanya dari kota yang sama = Tidak
+* Top-N = 5
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
+Output:
 
-**Rekomendasi Destinasi Wisata**:
-| No | place\_name                  | category           | city       |
-| -- | ---------------------------- | ------------------ | ---------- |
-| 1  | Stone Garden Citatah         | Bahari, Cagar Alam | Yogyakarta |
-| 2  | Taman Wisata Alam Cikole     | Bahari, Cagar Alam | Yogyakarta |
-| 3  | Taman Kupu-Kupu Cihanjuang   | Bahari, Cagar Alam | Yogyakarta |
-| 4  | Gua Pawon                    | Bahari, Cagar Alam | Yogyakarta |
-| 5  | Taman Wisata Alam Ranca Upas | Bahari, Cagar Alam | Yogyakarta |
+| No | Nama Destinasi                 | Kategori           | Kota     |
+| -- | ------------------------------ | ------------------ | -------- |
+| 1  | Taman Wisata Alam Situgunung   | Budaya, Cagar Alam | Sukabumi |
+| 2  | Goa Rong                       | Budaya, Cagar Alam | Semarang |
+| 3  | Stone Garden Citatah           | Budaya, Cagar Alam | Bandung  |
+| 4  | Taman Wisata Alam Riung Gunung | Budaya, Cagar Alam | Bogor    |
+| 5  | Taman Wisata Alam Ciloto       | Budaya, Cagar Alam | Bogor    |
 
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): y
-
-Masukkan kategori wisata (contoh: budaya, cagar alam): cagar alam
-
-Masukkan nama kota (opsional, tekan Enter jika ingin semua kota):
-
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
-
-**Rekomendasi Destinasi Wisata**:
-| No | place\_name                     | category   | city     |
-| -- | ------------------------------- | ---------- | -------- |
-| 1  | Air Terjun Semirang             | Cagar Alam | Semarang |
-| 2  | Danau Rawa Pening               | Cagar Alam | Semarang |
-| 3  | Bukit Jamur                     | Cagar Alam | Bandung  |
-| 4  | Brown Canyon                    | Cagar Alam | Semarang |
-| 5  | Hutan Wisata Tinjomoyo Semarang | Cagar Alam | Semarang |
-
-Apakah Anda hanya ingin rekomendasi dari kota yang sama? (y/n): n
+Penjelasan:
+Ketika pengguna tidak memasukkan kota tujuan dan memilih untuk tidak membatasi rekomendasi berdasarkan kota, sistem menampilkan 5 destinasi wisata dengan kategori “budaya” dari berbagai kota. Hal ini memungkinkan pengguna melihat rekomendasi destinasi wisata budaya terbaik tanpa batasan geografis.
 
 ### 2. Model Sistem Rekomendasi Collaborative Filtering 
 
@@ -505,9 +513,42 @@ Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi te
 
 ## Evaluation
 
-Pada bagian ini, dilakukan evaluasi terhadap kinerja model rekomendasi berbasis Matrix Factorization dengan TensorFlow. Tujuan evaluasi adalah mengukur seberapa akurat model dalam memprediksi rating pengguna terhadap destinasi ekowisata.
+Pada bagian ini dilakukan evaluasi terhadap dua model rekomendasi yang dikembangkan, yaitu:
 
-### Evaluation Metric
+1. Content-Based Filtering (CBF) menggunakan pendekatan kategori dan atribut konten.
+   
+2. Collaborative Filtering (CF) menggunakan Matrix Factorization dengan TensorFlow
+
+### 1. Evaluation Content-Based Filtering
+
+Evaluasi model CBF dilakukan dengan mengukur **Precision\@K** dan **Recall\@K** berdasarkan rekomendasi destinasi yang sesuai kategori dan kota.
+
+**Metode Perhitungan (Ringkas):**
+
+Precision\@K dan Recall\@K dihitung dengan rumus:
+
+$$
+\text{Precision@K} = \frac{\text{Jumlah item relevan di rekomendasi}}{K}
+$$
+
+$$
+\text{Recall@K} = \frac{\text{Jumlah item relevan di rekomendasi}}{\text{Total item relevan di dataset}}
+$$
+
+### Hasil Evaluasi
+
+| Kategori | Filter Kota              | Precision\@5 | Recall\@5 |
+| -------- | ------------------------ | ------------ | --------- |
+| budaya   | Bandung (same city only) | 1.0          | 0.5556    |
+| budaya   | Tanpa filter kota        | 1.0          | 0.1515    |
+
+### Insight
+
+* Precision tinggi (1.0) menunjukkan semua rekomendasi yang diberikan memang relevan dengan kategori yang dipilih.
+* Recall lebih rendah, terutama tanpa filter kota, karena rekomendasi hanya mengambil 5 item dari total item relevan yang lebih banyak.
+* Dengan filter kota, recall meningkat karena cakupan data yang lebih sempit sehingga model lebih efektif dalam menangkap destinasi relevan di wilayah tersebut.
+
+### 2. Evaluation Collaborative Filtering
 
 Metode evaluasi utama yang digunakan adalah Root Mean Squared Error (RMSE), yang mengukur deviasi rata-rata kuadrat antara prediksi dan nilai aktual. RMSE memberikan penalti lebih besar terhadap kesalahan besar, sehingga efektif untuk mengevaluasi akurasi model prediksi.
 
