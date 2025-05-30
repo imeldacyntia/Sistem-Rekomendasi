@@ -395,36 +395,38 @@ Rekomendasi kemudian disusun berdasarkan skor prediksi tertinggi, sehingga desti
 * Sistem menyortir destinasi berdasarkan **nilai prediksi tertinggi**.
 * Top-N destinasi dengan skor prediksi tertinggi
   
-#### Contoh Interaksi dan Ouput
+#### Contoh Interaksi dan Output
 
-Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi terhadap salah satu pengguna dalam dataset, yaitu User ID: 129. Berikut adalah hasil interaksi sistem:
+Untuk mengevaluasi performa model Collaborative Filtering, dilakukan simulasi terhadap salah satu pengguna dalam dataset, yaitu User ID: 64. Berikut adalah hasil interaksi sistem:
 
-**5 Tempat Favorit dari User ID: 129**
+**5 Tempat Favorit dari User ID: 64**
+
 *Berdasarkan rating tertinggi yang telah diberikan oleh pengguna*
+
+| No | Nama Tempat Wisata                      |
+| -- | --------------------------------------- |
+| 1  | Taman Wisata Alam Kampoeng Air Kragilan |
+| 2  | Curug Cimahi                            |
+| 3  | Taman Bunga Cihideung                   |
+| 4  | Pantai Klayar                           |
+| 5  | Ekowisata Mangrove Wonorejo             |
+
+**10 Rekomendasi Tempat Wisata untuk User ID: 64**
+
+*Hasil prediksi dari model Collaborative Filtering berdasarkan preferensi pengguna*
 
 | No | Nama Tempat Wisata              |
 | -- | ------------------------------- |
-| 1  | Taman Hutan Raya Ir. H. Djuanda |
-| 2  | Air Terjun Semirang             |
-| 3  | Taman Wisata Alam Ranca Upas    |
-| 4  | Taman Nasional Karimunjawa      |
-| 5  | Pantai Klayar                   |
-
-**10 Rekomendasi Tempat Wisata untuk User ID: 129**
-*Hasil prediksi dari model Collaborative Filtering berdasarkan preferensi pengguna*
-
-| No | Nama Tempat Wisata                  |
-| -- | ----------------------------------- |
-| 1  | Kawah Rengganis Cibuni              |
-| 2  | Kebun Bibit Wonorejo                |
-| 3  | Taman Wisata Alam Ciloto            |
-| 4  | Taman Wisata Alam Gunung Geulis     |
-| 5  | Taman Nasional Bromo Tengger Semeru |
-| 6  | Desa Wisata Munduk                  |
-| 7  | Kampoeng Kopi Banaran               |
-| 8  | Taman Nasional Bali Barat           |
-| 9  | Taman Nasional Berbak               |
-| 10 | Desa Wisata Cinangneng              |
+| 1  | Taman Agrowisata Cilangkap      |
+| 2  | Waduk Jatibarang Mijen          |
+| 3  | Taman Wisata Alam Situgunung    |
+| 4  | Taman Nasional Meru Betiri      |
+| 5  | Sanghyang Heuleut               |
+| 6  | Taman Wisata Alam Gunung Geulis |
+| 7  | Desa Wisata Mangunan            |
+| 8  | Gua Pawon                       |
+| 9  | Taman Hutan Raya Ngurah Rai     |
+| 10 | Air Terjun Kali Pancur          |
 
 
 ### Kelebihan dan Kekurangan
